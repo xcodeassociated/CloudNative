@@ -1,0 +1,3 @@
+[submodule "cloud/config"]
+	path = cloud/config
+	url = git@github.com:xcodeassociated/cloud_native_config.git
