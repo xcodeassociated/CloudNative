@@ -1,3 +1,6 @@
 [submodule "cloud/config"]
 	path = cloud/config
 	url = git@github.com:xcodeassociated/cloud_native_config.git
+[submodule "cloud/zipkin"]
+	path = cloud/zipkin
+	url = git@github.com:apache/incubator-zipkin.git
