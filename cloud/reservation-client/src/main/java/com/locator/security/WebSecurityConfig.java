@@ -39,6 +39,8 @@ public class WebSecurityConfig {
 
 				.pathMatchers("/login").permitAll()
 				.pathMatchers("/resource/home").permitAll()
+				.pathMatchers("/resource/rabbit").permitAll()
+				.pathMatchers("/resource/noauth-reservations").permitAll()
 
 				.anyExchange().authenticated()
 				.and()

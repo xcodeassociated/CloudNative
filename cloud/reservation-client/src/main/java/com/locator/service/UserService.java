@@ -7,10 +7,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 
-/**
- *
- * @author ard333
- */
 @Service
 public class UserService {
 	

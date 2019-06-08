@@ -61,6 +61,8 @@ dependencies {
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 //    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    compile("org.springframework.boot:spring-boot-starter-amqp")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
 dependencyManagement {
