@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+<!--        <RollingFile name="File" fileName="logs/application.log"-->
+<!--                     filePattern="logs/application-%d{MM-dd-yyyy}-%i.log">-->
+<!--            <PatternLayout>-->
+<!--                <Pattern>%d %p %c [%t] %m%n</Pattern>-->
+<!--            </PatternLayout>-->
+<!--            <Policies>-->
+<!--                <TimeBasedTriggeringPolicy />-->
+<!--                <SizeBasedTriggeringPolicy size="5 MB"/>-->
+<!--            </Policies>-->
+<!--            <DefaultRolloverStrategy max="2000"/>-->
+<!--        </RollingFile>-->
+    </Appenders>
+
+    <Loggers>
+        <Root level="WARN">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <!-- PROJECT -->
+        <logger name="com.locator" level="TRACE" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+        <!-- FRAMEWORKS -->
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+        <logger name="org.springframework.cloud" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+        <logger name="org.springframework.security" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+        <logger name="io.netty" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+        <logger name="org.apache" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+        <logger name="org.hibernate" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+        <logger name="org.mongodb.driver" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+    </Loggers>
+</Configuration>

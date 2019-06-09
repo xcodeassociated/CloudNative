@@ -1,7 +1,7 @@
 package com.locator.rest;
 
 import com.locator.model.Message;
-import org.springframework.http.HttpMethod;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -19,30 +18,34 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+@Log4j2
 @RestController
 public class ResourceREST {
+	protected WebClient client = WebClient.create("http://localhost:8000");
+    private ConnectionFactory factory;
+    private Connection connection;
+    private Channel channel;
+    private static final String QUEUE_NAME = "hello_queue";
 
-	WebClient client = WebClient.create("http://localhost:8000");
-
-	ResourceREST() {
-		System.out.println(">>> ResourceREST");
+	ResourceREST() throws TimeoutException, IOException {
+        this.factory = new ConnectionFactory();
+        factory.setHost("localhost");
+		this.connection = factory.newConnection();
+		this.channel = connection.createChannel();
+		channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 	}
 
-
 	@RequestMapping(value = "/resource/rabbit", method = RequestMethod.GET)
-	public Mono<String> rabbit() throws IOException, TimeoutException {
-		var queueName = "hello_queue";
-
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
-		try (Connection connection = factory.newConnection();
-			 Channel channel = connection.createChannel()) {
-			channel.queueDeclare(queueName, false, false, false, null);
-			String message = "Hello World!";
-			channel.basicPublish("", queueName, null, message.getBytes("UTF-8"));
-			System.out.println(" [x] Sent '" + message + "'");
+	public Mono<String> rabbit() throws TimeoutException, IOException {
+		String message = "ping";
+		if (channel.isOpen()) {
+			channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"));
+			log.info(" [x] Sent '" + message + "'");
+			return Mono.just("Message has been sent...");
+		} else {
+			log.error("Channel is closed!");
+			return Mono.just("Message has NOT sent...");
 		}
-		return Mono.just("Message has been sent...");
 	}
 
 	@RequestMapping(value = "/resource/home", method = RequestMethod.GET)

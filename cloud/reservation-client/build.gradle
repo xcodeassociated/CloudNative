@@ -28,6 +28,9 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+    compile.exclude group:'ch.qos.logback'
+    all*.exclude module : 'spring-boot-starter-logging'
+
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -43,23 +46,18 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.10.5'
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.cloud:spring-cloud-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-//	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
-//	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
-//	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
-//	implementation 'org.springframework.cloud:spring-cloud-stream-reactive'
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
-//    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.security:spring-security-test'
     compile("org.springframework.boot:spring-boot-starter-amqp")
     testCompile("org.springframework.boot:spring-boot-starter-test")

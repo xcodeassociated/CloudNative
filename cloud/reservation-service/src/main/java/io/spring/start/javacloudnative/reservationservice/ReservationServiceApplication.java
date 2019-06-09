@@ -3,6 +3,7 @@ package io.spring.start.javacloudnative.reservationservice;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -20,7 +21,10 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
+
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -29,6 +33,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 
+@Log4j2
 @EnableDiscoveryClient
 @SpringBootApplication
 public class ReservationServiceApplication {
@@ -43,6 +48,7 @@ public class ReservationServiceApplication {
 	}
 
 	public static void main(String[] args) {
+		log.debug("Application Context Running");
 		SpringApplication.run(ReservationServiceApplication.class, args);
 	}
 
