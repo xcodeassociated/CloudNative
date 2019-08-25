@@ -1,5 +1,6 @@
 package io.spring.start.javacloudnative.reservationservice;
 
+import com.rabbitmq.client.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,16 +22,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
-
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeoutException;
-
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
-
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 
 @Log4j2
@@ -41,39 +33,15 @@ public class ReservationServiceApplication {
 	@Bean
 	RouterFunction<ServerResponse> routes(ReservationRepository reservationRepository, Environment env) {
 		return RouterFunctions
-				.route(GET("/routerreservations"),
+				.route(GET("/router/reservations"),
 					serverRequest -> ServerResponse.ok().body(reservationRepository.findAll(), Reservation.class))
-				.andRoute(GET("/message"),
+				.andRoute(GET("/router/message"),
 								request -> ServerResponse.ok().body(Flux.just(env.getProperty("message")), String.class));
 	}
 
 	public static void main(String[] args) {
 		log.debug("Application Context Running");
 		SpringApplication.run(ReservationServiceApplication.class, args);
-	}
-
-}
-
-@Component
-class QueueReceiver implements ApplicationRunner {
-
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		var queueName = "hello_queue";
-
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
-		Connection connection = factory.newConnection();
-		Channel channel = connection.createChannel();
-
-		channel.queueDeclare(queueName, false, false, false, null);
-		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-
-		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-			String message = new String(delivery.getBody(), "UTF-8");
-			System.out.println(" [x] Received '" + message + "'");
-		};
-		channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
 	}
 
 }
@@ -89,6 +57,7 @@ class Reservation {
 
 interface ReservationRepository extends ReactiveMongoRepository<Reservation, String> {}
 
+@Log4j2
 @Component
 class DataWriter implements ApplicationRunner {
 
@@ -99,7 +68,8 @@ class DataWriter implements ApplicationRunner {
 	}
 
 	@Override
-	public void run(ApplicationArguments args) throws Exception {
+	public void run(ApplicationArguments args) {
+		log.info("DataWriter Bean Context Started");
 		this.reservationRepository
 				.deleteAll()
 				.thenMany(
@@ -107,7 +77,7 @@ class DataWriter implements ApplicationRunner {
 							.map(name -> new Reservation(null, name))
 							.flatMap(this.reservationRepository::save))
 				.thenMany(this.reservationRepository.findAll())
-					.subscribe(System.out::println);
+					.subscribe(log::debug);
 	}
 }
 
@@ -123,18 +93,93 @@ class ReservationRestController {
 	}
 }
 
+// rabbitmq
+
+@Log4j2
 @Component
-class Receiver {
+class QueueReceiver implements ApplicationRunner {
 
-	private CountDownLatch latch = new CountDownLatch(1);
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		log.info("QueueReceiver Bean Context Started");
+		var queueName = "hello_queue";
 
-	public void receiveMessage(String message) {
-		System.out.println("Received <" + message + ">");
-		latch.countDown();
-	}
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost");
+		Connection connection = factory.newConnection();
+		Channel channel = connection.createChannel();
 
-	public CountDownLatch getLatch() {
-		return latch;
+		channel.queueDeclare(queueName, false, false, false, null);
+		log.info(" [*] Waiting for messages. To exit press CTRL+C");
+
+		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+			String message = new String(delivery.getBody(), "UTF-8");
+			log.info(" [x] Received '" + message + "'");
+		};
+		channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
 	}
 
 }
+
+
+@Log4j2
+@Component
+class RPCServer implements ApplicationRunner {
+	private static final String RPC_QUEUE_NAME = "rpc_queue";
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		log.info("RPCServer Bean Context Started");
+
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost");
+
+		try (Connection connection = factory.newConnection();
+			 Channel channel = connection.createChannel()) {
+			channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
+			channel.queuePurge(RPC_QUEUE_NAME);
+
+			channel.basicQos(1);
+
+			log.info(" [x] Awaiting RPC requests");
+
+			Object monitor = new Object();
+			DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+				AMQP.BasicProperties replyProps = new AMQP.BasicProperties
+						.Builder()
+						.correlationId(delivery.getProperties().getCorrelationId())
+						.build();
+
+				String response = "";
+				try {
+					String message = new String(delivery.getBody(), "UTF-8");
+
+					log.info(" [.] got(" + message + ")");
+					response += message + " processed";
+				} catch (RuntimeException e) {
+					log.error(" [.] " + e.toString());
+				} finally {
+					channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8"));
+					channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+					// RabbitMq consumer worker thread notifies the RPC server owner thread
+					synchronized (monitor) {
+						monitor.notify();
+					}
+				}
+			};
+
+			channel.basicConsume(RPC_QUEUE_NAME, false, deliverCallback, (consumerTag -> { }));
+			// Wait and be prepared to consume the message from RPC client.
+			while (true) {
+				synchronized (monitor) {
+					try {
+						monitor.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+}
+

@@ -1,4 +1,4 @@
-package com.locator;
+package io.spring.start.javanative.reservationclient;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

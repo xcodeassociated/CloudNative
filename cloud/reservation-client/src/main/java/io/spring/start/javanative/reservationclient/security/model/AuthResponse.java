@@ -1,4 +1,4 @@
-package com.locator.security.model;
+package io.spring.start.javanative.reservationclient.security.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,10 +9,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class  AuthRequest {
+public class AuthResponse {
 	
-	private String username;
-	
-	private String password;
+	private String token;
 
 }

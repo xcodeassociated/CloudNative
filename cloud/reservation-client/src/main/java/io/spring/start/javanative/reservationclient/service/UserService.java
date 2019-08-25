@@ -1,7 +1,7 @@
-package com.locator.service;
+package io.spring.start.javanative.reservationclient.service;
 
-import com.locator.model.User;
-import com.locator.security.model.Role;
+import io.spring.start.javanative.reservationclient.model.User;
+import io.spring.start.javanative.reservationclient.security.model.Role;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

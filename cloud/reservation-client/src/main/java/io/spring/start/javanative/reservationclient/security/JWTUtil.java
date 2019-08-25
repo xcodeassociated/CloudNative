@@ -1,6 +1,6 @@
-package com.locator.security;
+package io.spring.start.javanative.reservationclient.security;
 
-import com.locator.model.User;
+import io.spring.start.javanative.reservationclient.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

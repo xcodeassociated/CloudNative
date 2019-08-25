@@ -1,6 +1,6 @@
-package com.locator.model;
+package io.spring.start.javanative.reservationclient.model;
 
-import com.locator.security.model.Role;
+import io.spring.start.javanative.reservationclient.security.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

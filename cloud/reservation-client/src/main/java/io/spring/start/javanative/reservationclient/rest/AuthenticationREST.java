@@ -1,9 +1,10 @@
-package com.locator.rest;
+package io.spring.start.javanative.reservationclient.rest;
 
-import com.locator.security.*;
-import com.locator.security.model.AuthRequest;
-import com.locator.security.model.AuthResponse;
-import com.locator.service.*;
+import io.spring.start.javanative.reservationclient.security.model.AuthRequest;
+import io.spring.start.javanative.reservationclient.security.model.AuthResponse;
+import io.spring.start.javanative.reservationclient.security.JWTUtil;
+import io.spring.start.javanative.reservationclient.security.PBKDF2Encoder;
+import io.spring.start.javanative.reservationclient.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

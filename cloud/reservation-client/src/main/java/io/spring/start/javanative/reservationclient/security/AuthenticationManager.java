@@ -1,6 +1,6 @@
-package com.locator.security;
+package io.spring.start.javanative.reservationclient.security;
 
-import com.locator.security.model.Role;
+import io.spring.start.javanative.reservationclient.security.model.Role;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;

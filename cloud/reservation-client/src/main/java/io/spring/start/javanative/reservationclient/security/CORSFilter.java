@@ -1,4 +1,4 @@
-package com.locator.security;
+package io.spring.start.javanative.reservationclient.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.CorsRegistry;

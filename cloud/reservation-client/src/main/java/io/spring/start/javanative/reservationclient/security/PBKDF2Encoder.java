@@ -1,4 +1,4 @@
-package com.locator.security;
+package io.spring.start.javanative.reservationclient.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
