@@ -22,8 +22,18 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
-import java.util.concurrent.CountDownLatch;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+
+import org.springframework.hateoas.ResourceSupport;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Log4j2
 @EnableDiscoveryClient
@@ -50,9 +60,23 @@ public class ReservationServiceApplication {
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-class Reservation {
+class Reservation  {
 	private String id;
 	private String reservationName;
+}
+
+class Greeting extends ResourceSupport {
+
+	private final String content;
+
+	@JsonCreator
+	public Greeting(@JsonProperty("content") String content) {
+		this.content = content;
+	}
+
+	public String getContent() {
+		return content;
+	}
 }
 
 interface ReservationRepository extends ReactiveMongoRepository<Reservation, String> {}
@@ -90,6 +114,22 @@ class ReservationRestController {
 	@GetMapping("/reservations")
 	Flux<Reservation> getAll() {
 		return this.reservationRepository.findAll();
+	}
+}
+
+@RestController
+class GreetingController {
+
+	private static final String TEMPLATE = "Hello, %s!";
+
+	@RequestMapping("/greeting")
+	public HttpEntity<Greeting> greeting(
+			@RequestParam(value = "name", required = false, defaultValue = "World") String name) {
+
+		Greeting greeting = new Greeting(String.format(TEMPLATE, name));
+		greeting.add(linkTo(methodOn(GreetingController.class).greeting(name)).withSelfRel());
+
+		return new ResponseEntity<>(greeting, HttpStatus.OK);
 	}
 }
 
