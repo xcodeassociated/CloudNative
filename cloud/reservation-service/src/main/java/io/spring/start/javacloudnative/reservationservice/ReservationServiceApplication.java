@@ -12,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
@@ -34,6 +35,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.h2.tools.*;
+
+@Component
+class H2 {
+	private org.h2.tools.Server webServer;
+	private org.h2.tools.Server server;
+
+	@EventListener(org.springframework.context.event.ContextRefreshedEvent.class)
+	public void start() throws java.sql.SQLException {
+		this.webServer = org.h2.tools.Server.createWebServer("-webPort", "8082", "-tcpAllowOthers").start();
+		this.server = org.h2.tools.Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
+	}
+
+	@EventListener(org.springframework.context.event.ContextClosedEvent.class)
+	public void stop() {
+		this.webServer.stop();
+		this.server.stop();
+	}
+
+}
 
 @Log4j2
 @EnableDiscoveryClient
