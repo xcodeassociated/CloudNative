@@ -4,6 +4,7 @@ import com.xcodeassociated.cloud.gateway.event.EventHandler;
 import com.xcodeassociated.cloud.gateway.model.Message;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
+import org.springframework.cloud.netflix.hystrix.HystrixCommands;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,14 +23,14 @@ import java.util.concurrent.TimeoutException;
 
 @Log4j2
 @RestController
-public class RequestHandler {
+public class RequestProceduralHandler {
 	private WebClient client = WebClient.create("http://localhost:8000");
     private ConnectionFactory factory;
     private Connection connection;
     private Channel channel;
     private static final String QUEUE_NAME = "hello_queue";
 
-	RequestHandler() throws TimeoutException, IOException {
+	RequestProceduralHandler() throws TimeoutException, IOException {
         this.factory = new ConnectionFactory();
         factory.setHost("localhost");
 		this.connection = factory.newConnection();
@@ -77,34 +78,32 @@ public class RequestHandler {
 		return Mono.just("home page");
 	}
 
-//	@HystrixCommand(fallbackMethod = "messageFallback")
+	// todo: refactor - wrap the hystrix call
 	@RequestMapping(value = "/pub-api/message", method = RequestMethod.GET)
 	public Mono<String> pubMessage(){
-		return client.get()
-				.uri("/router/message")
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToMono(String.class);
+		return HystrixCommands
+				.from(client.get()
+						.uri("/router/message")
+						.accept(MediaType.APPLICATION_JSON)
+						.retrieve()
+						.bodyToMono(String.class))
+				.fallback(Mono.just("Fallback"))
+				.commandName("getMessage")
+				.toMono();
 	}
 
-	public Mono<String> messageFallback(){
-		// fallback: possible lost connection with service
-		return Mono.just("Fallback");
-	}
-
-//	@HystrixCommand(fallbackMethod = "reservationsFallback")
+	// todo: refactor - wrap the hystrix call
 	@RequestMapping(value = "/pub-api/reservations", method = RequestMethod.GET)
 	public Flux<String> pubReservations(){
-		return client.get()
-				.uri("/router/reservations")
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToFlux(String.class);
-	}
-
-	public Flux<String> reservationsFallback() {
-		// fallback: possible lost connection with service
-		return Flux.just("Fallback");
+		return HystrixCommands
+				.from(client.get()
+						.uri("/router/reservations")
+						.accept(MediaType.APPLICATION_JSON)
+						.retrieve()
+						.bodyToFlux(String.class))
+				.fallback(Mono.just("Fallback"))
+				.commandName("getReservations")
+				.toFlux();
 	}
 
 	// restricted
@@ -119,7 +118,6 @@ public class RequestHandler {
 		);
 	}
 
-//	@HystrixCommand(fallbackMethod = "messageFallback")
 	@RequestMapping(value = "/resource/message", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public Mono<String> message(){
@@ -130,7 +128,6 @@ public class RequestHandler {
 				.bodyToMono(String.class);
 	}
 
-//	@HystrixCommand(fallbackMethod = "reservationsFallback")
 	@RequestMapping(value = "/resource/reservations", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public Flux<String> reservations(){
