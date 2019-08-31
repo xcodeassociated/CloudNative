@@ -2,6 +2,7 @@ zuul:
   prefix: /api
   routes:
     gateway:
+      sensitiveHeaders:
       path: /gateway/**
       serviceId: GATEWAY-SERVICE
     event:
