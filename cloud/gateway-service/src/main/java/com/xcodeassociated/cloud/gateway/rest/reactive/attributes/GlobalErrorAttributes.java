@@ -9,11 +9,17 @@ import java.util.Map;
 
 @Component
 public class GlobalErrorAttributes extends DefaultErrorAttributes {
-    private HttpStatus status = HttpStatus.BAD_REQUEST;
-    private String message = "please provide a name";
+    private HttpStatus status;
+    private String message;
 
     public GlobalErrorAttributes() {
+        this(HttpStatus.BAD_REQUEST, "...");
+    }
+
+    public GlobalErrorAttributes(HttpStatus status, String message) {
         super(false);
+        this.status = status;
+        this.message = message;
     }
 
     @Override

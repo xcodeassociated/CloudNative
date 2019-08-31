@@ -22,6 +22,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
                                           ResourceProperties resourceProperties,
                                           ApplicationContext applicationContext,
                                           ServerCodecConfigurer configure) {
+
         super(errorAttributes, resourceProperties, applicationContext);
         super.setMessageWriters(configure.getWriters());
         super.setMessageReaders(configure.getReaders());

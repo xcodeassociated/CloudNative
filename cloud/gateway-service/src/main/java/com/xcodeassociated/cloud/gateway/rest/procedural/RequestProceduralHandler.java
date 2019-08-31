@@ -4,7 +4,11 @@ import com.xcodeassociated.cloud.gateway.event.EventHandler;
 import com.xcodeassociated.cloud.gateway.model.Message;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.hystrix.HystrixCommands;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,22 +24,33 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.concurrent.TimeoutException;
 
-
 @Log4j2
 @RestController
 public class RequestProceduralHandler {
-	private WebClient client = WebClient.create("http://localhost:8000");
+
+	@Qualifier("loadBalancedWebClientBuilder")
+	@Autowired
+	private WebClient.Builder client;
+
+	// todo: refactor rabbitMQ
     private ConnectionFactory factory;
     private Connection connection;
     private Channel channel;
     private static final String QUEUE_NAME = "hello_queue";
 
 	RequestProceduralHandler() throws TimeoutException, IOException {
+		// todo: refactor rabbitMQ
         this.factory = new ConnectionFactory();
         factory.setHost("localhost");
 		this.connection = factory.newConnection();
 		this.channel = connection.createChannel();
 		this.channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+	}
+
+	@Bean
+	@LoadBalanced
+	public WebClient.Builder loadBalancedWebClientBuilder() {
+		return WebClient.builder();
 	}
 
 	// public
@@ -82,8 +97,8 @@ public class RequestProceduralHandler {
 	@RequestMapping(value = "/pub-api/message", method = RequestMethod.GET)
 	public Mono<String> pubMessage(){
 		return HystrixCommands
-				.from(client.get()
-						.uri("/router/message")
+				.from(client.build().get()
+						.uri("http://event-service/router/message")
 						.accept(MediaType.APPLICATION_JSON)
 						.retrieve()
 						.bodyToMono(String.class))
@@ -96,8 +111,8 @@ public class RequestProceduralHandler {
 	@RequestMapping(value = "/pub-api/reservations", method = RequestMethod.GET)
 	public Flux<String> pubReservations(){
 		return HystrixCommands
-				.from(client.get()
-						.uri("/router/reservations")
+				.from(client.build().get()
+						.uri("http://event-service/router/reservations")
 						.accept(MediaType.APPLICATION_JSON)
 						.retrieve()
 						.bodyToFlux(String.class))
@@ -121,8 +136,8 @@ public class RequestProceduralHandler {
 	@RequestMapping(value = "/resource/message", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public Mono<String> message(){
-		return client.get()
-				.uri("/router/message")
+		return client.build().get()
+				.uri("http://event-service/router/message")
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(String.class);
@@ -131,8 +146,8 @@ public class RequestProceduralHandler {
 	@RequestMapping(value = "/resource/reservations", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public Flux<String> reservations(){
-		return client.get()
-				.uri("/router/reservations")
+		return client.build().get()
+				.uri("http://event-service/router/reservations")
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
 				.bodyToFlux(String.class);

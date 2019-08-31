@@ -41,7 +41,7 @@ public class WebSecurityConfig {
 				.pathMatchers("/resource/login").permitAll()
 				.pathMatchers("/pub-api/**").permitAll()
 				// webflux router public
-				.pathMatchers("/reactive/message/**").permitAll()
+				.pathMatchers("/reactive/**").permitAll()
 				// webflux restricted access
 				.pathMatchers("/resource/**").access((mono, context) -> mono
 						.map(auth -> auth.getAuthorities().stream().anyMatch(e ->

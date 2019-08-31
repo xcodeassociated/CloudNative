@@ -37,7 +37,7 @@ public class ReactiveRequestHandler {
                 .body(exceptionDuringProcess(request)
                         .onErrorResume(e ->
                                 Mono.error(new NameRequiredException(
-                                        HttpStatus.BAD_REQUEST, "please provide a name", e))), String.class);
+                                        HttpStatus.BAD_REQUEST, "Exception: (example)", e))), String.class);
     }
 
     private Mono<String> exceptionDuringProcess(ServerRequest request) {
