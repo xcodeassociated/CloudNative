@@ -11,7 +11,10 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -37,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.h2.tools.*;
 
+// <H2 Netty console>
+@Log4j2
 @Component
 class H2 {
 	private org.h2.tools.Server webServer;
@@ -44,16 +49,28 @@ class H2 {
 
 	@EventListener(org.springframework.context.event.ContextRefreshedEvent.class)
 	public void start() throws java.sql.SQLException {
+		log.debug("H2 console starting...");
 		this.webServer = org.h2.tools.Server.createWebServer("-webPort", "8082", "-tcpAllowOthers").start();
 		this.server = org.h2.tools.Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
 	}
 
 	@EventListener(org.springframework.context.event.ContextClosedEvent.class)
 	public void stop() {
+		log.debug("H2 console closing...");
 		this.webServer.stop();
 		this.server.stop();
 	}
 
+}
+// <!-->
+
+@Log4j2
+@Component
+class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		log.debug("Application bootstrap starting");
+	}
 }
 
 @Log4j2
@@ -143,7 +160,7 @@ class GreetingController {
 
 	private static final String TEMPLATE = "Hello, %s!";
 
-	@RequestMapping("/greeting")
+	@RequestMapping("/links")
 	public HttpEntity<Greeting> greeting(
 			@RequestParam(value = "name", required = false, defaultValue = "World") String name) {
 
@@ -153,6 +170,10 @@ class GreetingController {
 		return new ResponseEntity<>(greeting, HttpStatus.OK);
 	}
 }
+
+// jpa
+
+
 
 // rabbitmq
 
