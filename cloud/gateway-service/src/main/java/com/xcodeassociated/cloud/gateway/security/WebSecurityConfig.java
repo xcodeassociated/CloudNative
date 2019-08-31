@@ -41,15 +41,11 @@ public class WebSecurityConfig {
 				.pathMatchers("/resource/login").permitAll()
 				.pathMatchers("/pub-api/**").permitAll()
 				// webflux router public
-				.pathMatchers("/reactive/message").permitAll()
-				.pathMatchers("/reactive/exception").permitAll()
-				.pathMatchers("/reactive/error").permitAll()
+				.pathMatchers("/reactive/message/**").permitAll()
 				// webflux restricted access
 				.pathMatchers("/resource/**").access((mono, context) -> mono
-						.map(auth -> auth.getAuthorities().stream()
-								.filter(e ->
-										e.getAuthority().equals("ROLE_ADMIN") || e.getAuthority().equals("ROLE_USER"))
-								.count() > 0)
+						.map(auth -> auth.getAuthorities().stream().anyMatch(e ->
+								e.getAuthority().equals("ROLE_ADMIN") || e.getAuthority().equals("ROLE_USER")))
 						.map(AuthorizationDecision::new))
 				// ---
 				.anyExchange()
