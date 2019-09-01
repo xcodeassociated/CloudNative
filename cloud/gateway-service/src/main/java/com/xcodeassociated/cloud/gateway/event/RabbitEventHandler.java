@@ -11,12 +11,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-public class EventHandler implements AutoCloseable {
+public class RabbitEventHandler implements AutoCloseable {
     private Connection connection;
     private Channel channel;
     private String requestQueueName = "rpc_queue";
 
-    public EventHandler() throws IOException, TimeoutException {
+    public RabbitEventHandler() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
 

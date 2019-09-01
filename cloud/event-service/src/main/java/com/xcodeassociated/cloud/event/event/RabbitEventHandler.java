@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
-public class EventHandler implements ApplicationRunner {
+public class RabbitEventHandler implements ApplicationRunner {
     private static final String RPC_QUEUE_NAME = "rpc_queue";
 
     @Override

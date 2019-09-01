@@ -22,7 +22,7 @@
             <AppenderRef ref="Console"/>
         </Root>
         <!-- PROJECT -->
-        <logger name="io.spring.start.javanative" level="TRACE" additivity="false">
+        <logger name="com.xcodeassociated.cloud" level="TRACE" additivity="false">
             <AppenderRef ref="Console"/>
         </logger>
         <!-- FRAMEWORKS -->

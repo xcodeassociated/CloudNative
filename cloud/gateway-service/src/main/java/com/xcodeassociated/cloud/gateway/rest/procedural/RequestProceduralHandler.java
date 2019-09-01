@@ -1,6 +1,7 @@
 package com.xcodeassociated.cloud.gateway.rest.procedural;
 
-import com.xcodeassociated.cloud.gateway.event.EventHandler;
+import com.xcodeassociated.cloud.gateway.event.RabbitEventHandler;
+import com.xcodeassociated.cloud.gateway.event.RabbitQueueSender;
 import com.xcodeassociated.cloud.gateway.model.Message;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,19 +38,11 @@ public class RequestProceduralHandler {
 	@Autowired
 	private WebClient.Builder client;
 
-	// todo: refactor rabbitMQ
-    private ConnectionFactory factory;
-    private Connection connection;
-    private Channel channel;
-    private static final String QUEUE_NAME = "hello_queue";
+	@Autowired
+	RabbitQueueSender queueSender;
 
-	RequestProceduralHandler() throws TimeoutException, IOException {
-		// todo: refactor rabbitMQ
-        this.factory = new ConnectionFactory();
-        factory.setHost("localhost");
-		this.connection = factory.newConnection();
-		this.channel = connection.createChannel();
-		this.channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+	RequestProceduralHandler() {
+
 	}
 
 	@Bean
@@ -63,19 +56,17 @@ public class RequestProceduralHandler {
 	// rabbitMQ
 	@RequestMapping(value = "/pub-api/rabbit", method = RequestMethod.GET, params = {"message"})
 	public Mono<String> rabbit(@RequestParam(value = "message") String data) throws IOException {
-		if (this.channel.isOpen()) {
-			this.channel.basicPublish("", QUEUE_NAME, null, data.getBytes("UTF-8"));
-			log.info(" [x] Sent '" + data + "'");
+		try {
+			this.queueSender.basicPublish(data);
 			return Mono.just("Message: {" + data + "} has been sent.");
-		} else {
-			log.error("Channel is closed!");
-			return Mono.just("Message: {" + data + "} has NOT been send! ");
+		} catch (Exception exception) {
+			return Mono.just(exception.getMessage());
 		}
 	}
 
 	@RequestMapping(value = "/pub-api/rabbit-rpc", method = RequestMethod.GET)
 	public Mono<String> rabbitRPC(@RequestParam("message") String data) {
-		try (EventHandler client = new EventHandler()) {
+		try (RabbitEventHandler client = new RabbitEventHandler()) {
 			log.info(" [x] Requesting: {" + data + "}");
 			String response = client.call(data);
 			log.info(" [.] Got '" + response + "'");

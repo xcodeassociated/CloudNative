@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
-public class QueueReceiver implements ApplicationRunner {
+public class RabbitQueueReceiver implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
