@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
 import configureStore from './store/configure'
-import Form from './components/Form'
+import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import Form from "./components/Form";
+import { Provider } from 'react-redux';
+import Home from './components/Home';
+
+// routes:
+export const HomeRoute = () => <Home />;
 
 class App extends Component {
 
@@ -12,10 +17,20 @@ class App extends Component {
 
   public render(): JSX.Element {
     return (
-      <Provider store={this.store()}>
-        <Form />
-      </Provider >
+        <Router>
+          <div>
+            <nav>
+              <Link to="/">Home</Link>
+              <Link to="/login">Login</Link>
+            </nav>
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/login" render={() => <Provider store={this.store()}><Form /></Provider > } />
+            </Switch>
+          </div>
+        </Router>
     );
+
   }
 }
 
