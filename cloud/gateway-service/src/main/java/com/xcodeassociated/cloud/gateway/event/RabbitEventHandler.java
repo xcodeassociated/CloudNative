@@ -12,9 +12,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
 public class RabbitEventHandler implements AutoCloseable {
-    private Connection connection;
-    private Channel channel;
-    private String requestQueueName = "rpc_queue";
+    private final Connection connection;
+    private final Channel channel;
+    private final String requestQueueName = "rpc_queue";
 
     public RabbitEventHandler() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();

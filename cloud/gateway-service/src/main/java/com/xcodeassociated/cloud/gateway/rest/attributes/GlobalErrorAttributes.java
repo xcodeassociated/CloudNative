@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.gateway.rest.reactive.attributes;
+package com.xcodeassociated.cloud.gateway.rest.attributes;
 
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;

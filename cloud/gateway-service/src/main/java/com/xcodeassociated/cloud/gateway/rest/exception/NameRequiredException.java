@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.gateway.rest.reactive.exception;
+package com.xcodeassociated.cloud.gateway.rest.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;

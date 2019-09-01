@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.gateway.rest.reactive.attributes;
+package com.xcodeassociated.cloud.gateway.rest.attributes;
 
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;

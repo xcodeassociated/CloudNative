@@ -1,8 +1,8 @@
 package com.xcodeassociated.cloud.gateway.rest.reactive;
 
-import com.xcodeassociated.cloud.gateway.rest.reactive.error.DefaultErrorCode;
-import com.xcodeassociated.cloud.gateway.rest.reactive.error.ErrorCodeInterface;
-import com.xcodeassociated.cloud.gateway.rest.reactive.exception.NameRequiredException;
+import com.xcodeassociated.cloud.gateway.rest.error.DefaultErrorCode;
+import com.xcodeassociated.cloud.gateway.rest.error.ErrorCodeInterface;
+import com.xcodeassociated.cloud.gateway.rest.exception.NameRequiredException;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;

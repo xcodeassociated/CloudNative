@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.concurrent.TimeoutException;
@@ -40,10 +38,6 @@ public class RequestProceduralHandler {
 
 	@Autowired
 	RabbitQueueSender queueSender;
-
-	RequestProceduralHandler() {
-
-	}
 
 	@Bean
 	@LoadBalanced

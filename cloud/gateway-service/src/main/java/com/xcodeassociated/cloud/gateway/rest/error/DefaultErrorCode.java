@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.gateway.rest.reactive.error;
+package com.xcodeassociated.cloud.gateway.rest.error;
 
 public class DefaultErrorCode implements ErrorCodeInterface {
     private final String errorMessage;

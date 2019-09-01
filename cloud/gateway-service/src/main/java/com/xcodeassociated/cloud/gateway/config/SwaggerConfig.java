@@ -16,7 +16,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
 @EnableSwagger2WebFlux
 @Configuration
 @Profile("dev")
-// todo: only dev profile
 public class SwaggerConfig {
 
     @Bean
