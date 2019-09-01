@@ -11,10 +11,12 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 @EnableHystrix
 @SpringBootApplication
 public class GatewayServiceApplication {
+
 	public static void main(String[] args) {
 	    log.debug("Application Context Running");
 		SpringApplication.run(GatewayServiceApplication.class, args);
 	}
+
 }
 
 
