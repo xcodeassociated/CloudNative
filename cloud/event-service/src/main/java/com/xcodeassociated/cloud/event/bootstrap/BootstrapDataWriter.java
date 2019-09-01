@@ -1,7 +1,7 @@
 package com.xcodeassociated.cloud.event.bootstrap;
 
 import com.xcodeassociated.cloud.event.model.Reservation;
-import com.xcodeassociated.cloud.event.service.ReservationRepository;
+import com.xcodeassociated.cloud.event.repository.ReservationRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

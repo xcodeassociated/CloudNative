@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.event.service;
+package com.xcodeassociated.cloud.event.repository;
 
 import com.xcodeassociated.cloud.event.model.Reservation;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;

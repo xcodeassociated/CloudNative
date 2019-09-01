@@ -2,7 +2,7 @@ package com.xcodeassociated.cloud.event.rest;
 
 import com.xcodeassociated.cloud.event.model.Reservation;
 import com.xcodeassociated.cloud.event.rest.dto.ResourceDto;
-import com.xcodeassociated.cloud.event.service.ReservationRepository;
+import com.xcodeassociated.cloud.event.repository.ReservationRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
