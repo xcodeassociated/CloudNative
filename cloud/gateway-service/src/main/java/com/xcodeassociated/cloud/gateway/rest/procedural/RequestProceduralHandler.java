@@ -2,6 +2,10 @@ package com.xcodeassociated.cloud.gateway.rest.procedural;
 
 import com.xcodeassociated.cloud.gateway.event.EventHandler;
 import com.xcodeassociated.cloud.gateway.model.Message;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import java.util.concurrent.TimeoutException;
 
 @Log4j2
 @RestController
+@Api(value = "Resource REST Endpoint", description = "...")
 public class RequestProceduralHandler {
 
 	@Qualifier("loadBalancedWebClientBuilder")
@@ -88,12 +93,14 @@ public class RequestProceduralHandler {
 		return Mono.just("{" + message + "}");
 	}
 
+	@ApiOperation(value = "Home Page")
 	@RequestMapping(value = "/pub-api/home", method = RequestMethod.GET)
 	public Mono<String> home(){
 		return Mono.just("home page");
 	}
 
 	// todo: refactor - wrap the hystrix call
+	@ApiOperation(value = "Returns ...")
 	@RequestMapping(value = "/pub-api/message", method = RequestMethod.GET)
 	public Mono<String> pubMessage(){
 		return HystrixCommands
@@ -108,6 +115,7 @@ public class RequestProceduralHandler {
 	}
 
 	// todo: refactor - wrap the hystrix call
+	@ApiOperation(value = "Returns ...")
 	@RequestMapping(value = "/pub-api/reservations", method = RequestMethod.GET)
 	public Flux<String> pubReservations(){
 		return HystrixCommands
@@ -122,7 +130,13 @@ public class RequestProceduralHandler {
 	}
 
 	// restricted
-
+	@ApiOperation(value = "Returns User Role")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 100, message = "..."),
+					@ApiResponse(code = 200, message = "Success operation")
+			}
+	)
 	@RequestMapping(value = "/resource/whoami", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public Mono<String> whoAmI(Authentication authentication, Principal principal) {

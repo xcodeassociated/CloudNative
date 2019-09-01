@@ -37,6 +37,8 @@ public class WebSecurityConfig {
 				.securityContextRepository(securityContextRepository)
 				.authorizeExchange()
 				.pathMatchers(HttpMethod.OPTIONS).permitAll()
+				// swagger ui
+				.pathMatchers("/api/**", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
 				// public access endpoints
 				.pathMatchers("/resource/login").permitAll()
 				.pathMatchers("/pub-api/**").permitAll()

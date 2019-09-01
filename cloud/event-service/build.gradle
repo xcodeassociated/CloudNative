@@ -8,6 +8,7 @@ apply plugin: 'io.spring.dependency-management'
 group = 'com.xcodeassociated'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+targetCompatibility = '11'
 
 configurations {
 	compile.exclude group:'ch.qos.logback'
