@@ -24,7 +24,7 @@ class App extends Component {
               <Link to="/login">Login</Link>
             </nav>
             <Switch>
-              <Route exact path="/" component={Home} />
+              <Route exact path="/" component={HomeRoute} />
               <Route exact path="/login" render={() => <Provider store={this.store()}><Form /></Provider > } />
             </Switch>
           </div>
