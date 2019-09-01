@@ -1,11 +1,13 @@
 package com.xcodeassociated.cloud.event.config;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
+@Profile("dev")
 public class H2Config {
     private org.h2.tools.Server webServer;
     private org.h2.tools.Server server;
