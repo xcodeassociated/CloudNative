@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import configureStore from './store/configure'
-import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom'
-import Form from "./components/Form";
-import { Provider } from 'react-redux';
 import Home from './components/Home';
+import NavBar from "./components/NavBar";
+import RouteController from "./routes/RouteController";
 
 // routes:
 export const HomeRoute = () => <Home />;
@@ -17,18 +16,10 @@ class App extends Component {
 
   public render(): JSX.Element {
     return (
-        <Router>
-          <div>
-            <nav>
-              <Link to="/">Home</Link>
-              <Link to="/login">Login</Link>
-            </nav>
-            <Switch>
-              <Route exact path="/" component={HomeRoute} />
-              <Route exact path="/login" render={() => <Provider store={this.store()}><Form /></Provider > } />
-            </Switch>
-          </div>
-        </Router>
+        <div>
+          <NavBar />
+            <RouteController>{this.store()}</RouteController>
+        </div>
     );
 
   }

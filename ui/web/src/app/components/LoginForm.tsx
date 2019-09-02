@@ -16,7 +16,7 @@ interface IState {
   password: string;
 }
 
-class Form extends Component<IProps, IState> {
+class LoginForm extends Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -75,4 +75,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Form);
+export default connect(mapStateToProps)(LoginForm);
