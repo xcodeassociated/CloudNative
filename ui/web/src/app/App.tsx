@@ -18,7 +18,7 @@ class App extends Component {
     return (
         <div>
           <NavBar />
-            <RouteController>{this.store()}</RouteController>
+          <RouteController>{this.store()}</RouteController>
         </div>
     );
 
