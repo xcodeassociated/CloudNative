@@ -3,6 +3,7 @@ import configureStore from './store/configure'
 import Home from './components/Home';
 import NavBar from "./components/NavBar";
 import RouteController from "./routes/RouteController";
+import './style/App.css';
 
 // routes:
 export const HomeRoute = () => <Home />;

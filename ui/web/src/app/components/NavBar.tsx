@@ -1,22 +1,20 @@
 import React, {Component} from "react";
-import {Nav, Navbar} from "react-bootstrap";
+import {Nav} from "react-bootstrap";
 import {Link} from 'react-router-dom';
-
+import '../style/NavBar.css';
 
 class NavBar extends Component {
 
     public render() {
         return(
-            <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="/">Web</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Link to="/">Home</Link>
-                        <Link to="/login">Login</Link>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
+            <Nav defaultActiveKey="/home" as="ul" className="navbar-header">
+                <Nav.Item as="li">
+                    <Link to="/">Home</Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                    <Link to="/login">Login</Link>
+                </Nav.Item>
+            </Nav>
         )
     }
 }
