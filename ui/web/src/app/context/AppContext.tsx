@@ -23,7 +23,7 @@ type PropsAppRouter = {
 
 interface IStateAppRouter {}
 
-class AppRouter extends Component<PropsAppRouter, IStateAppRouter> {
+class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
 
     constructor(props: Readonly<PropsAppRouter>) {
         super(props);
@@ -93,4 +93,4 @@ const mapStateToPropsAppRouter = (state) => {
     };
 };
 
-export default connect(mapStateToPropsAppRouter)(AppRouter);
+export default connect(mapStateToPropsAppRouter)(AppContext);

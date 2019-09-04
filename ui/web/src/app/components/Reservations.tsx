@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import { appConfig } from '../config/appConfig'
 import '../style/Reservations.css'
+import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
+import {Reservation} from "../model/Reservation";
 
 interface IState {
   reservations: Array<Reservation>;
-}
-
-interface Reservation {
-  id: string;
-  reservationName: number;
 }
 
 class Reservations extends Component<object, IState> {
@@ -50,16 +47,24 @@ class Reservations extends Component<object, IState> {
     if (this.hasToken()) {
       return (
           <div id="reservations-list">
-            <table className="table table-bordered">
-              <tbody>
-                <tr>
-                  {this.state.reservations
-                      .map((reservation: Reservation) => <td className="reservation-item">{reservation.reservationName}</td>)}
-                  </tr>
-              </tbody>
-            </table>
+            <MDBTable>
+              <MDBTableHead>
+                <tr className="reservations-list-table-header">
+                  <th className="reservations-list-table-header-id">ID</th>
+                  <th className="reservations-list-table-header-name">Name</th>
+                </tr>
+              </MDBTableHead>
+              <MDBTableBody>
+                {this.state.reservations
+                    .map((reservation: Reservation) =>
+                        <tr className="reservation-item">
+                          <td>{reservation.id}</td>
+                          <td>{reservation.reservationName}</td>
+                        </tr>)}
+              </MDBTableBody>
+          </MDBTable>
           </div>
-      )
+      );
     } else {
       return (<h1>Unauthorized</h1>)
     }

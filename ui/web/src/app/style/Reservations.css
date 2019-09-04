@@ -1,2 +1,10 @@
 #reservations-list {
 }
+
+.reservations-list-table-header-id {
+    width: 20%;
+}
+
+.reservations-list-table-header-name {
+    width: 80%;
+}
