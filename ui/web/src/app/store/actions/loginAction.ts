@@ -3,10 +3,11 @@ import { LoginService } from '../../services/LoginService'
 export const actions = {
   SET_LOGIN_PENDING: 'SET_LOGIN_PENDING',
   SET_LOGIN_SUCCESS: 'SET_LOGIN_SUCCESS',
-  SET_LOGIN_ERROR: 'SET_LOGIN_ERROR'
+  SET_LOGIN_ERROR: 'SET_LOGIN_ERROR',
+  LOGOUT: 'LOGOUT'
 };
 
-export function loginAction(email:string, password:string) {
+export function loginAction(email:string, password:string): any {
   return dispatch => {
     dispatch(setLoginPending(true));
     dispatch(setLoginSuccess(false));
@@ -14,10 +15,7 @@ export function loginAction(email:string, password:string) {
 
     LoginService.login(email, password).then(
       token => {
-        // eslint-disable-next-line @typescript-eslint/no-angle-bracket-type-assertion
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-angle-bracket-type-assertion
-        localStorage.setItem('token', <string>token["token"]);
+        localStorage.setItem('token', token["token"]);
         dispatch(setLoginPending(false));
         dispatch(setLoginSuccess(true));
       },
@@ -29,23 +27,36 @@ export function loginAction(email:string, password:string) {
   }
 }
 
-function setLoginPending(isLoginPending) {
+function setLoginPending(isLoginPending): any {
   return {
     type: actions.SET_LOGIN_PENDING,
     isLoginPending
   };
 }
 
-function setLoginSuccess(isLoginSuccess) {
+function setLoginSuccess(isLoginSuccess): any {
   return {
     type: actions.SET_LOGIN_SUCCESS,
     isLoginSuccess
   };
 }
 
-function setLoginError(loginError) {
+function setLoginError(loginError): any {
   return {
     type: actions.SET_LOGIN_ERROR,
     loginError
+  }
+}
+
+function setLogout(): any {
+  return {
+    type: actions.LOGOUT
+  }
+}
+
+export function logoutAction() {
+  return dispatch => {
+    localStorage.removeItem('token');
+    dispatch(setLogout());
   }
 }

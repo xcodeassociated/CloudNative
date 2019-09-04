@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import configureStore from '../store/config/storeConfig'
-import AppRouter from "../routes/AppRouter";
+import AppRouterProvider from "../routes/AppRouterProvider";
 import '../style/App.css';
 
 class App extends Component {
@@ -13,7 +13,7 @@ class App extends Component {
   public render(): JSX.Element {
     return (
         <div id="app">
-          <AppRouter>{this.store()}</AppRouter>
+          <AppRouterProvider children={this.store()} />
         </div>
     );
 

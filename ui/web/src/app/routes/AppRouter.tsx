@@ -8,48 +8,81 @@ import {Nav} from "react-bootstrap";
 import {Link, Router} from 'react-router-dom';
 import history from './history';
 import '../style/AppRouter.css';
+import { connect } from 'react-redux';
+import { logoutAction } from '../store/actions/loginAction'
 
 type NamedProps = {
     data?: any
 }
 
-type Props = {
+type PropsAppRouter = {
+    dispatch: Function
     children: ReactChild | NamedProps
 }
 
-class AppRouter extends Component<Props> {
+interface IStateAppRouter {}
+
+class AppRouter extends Component<PropsAppRouter, IStateAppRouter> {
+
+    constructor(props: Readonly<PropsAppRouter>) {
+        super(props);
+        this.state = {};
+    }
+
+    public isLoggedIn(): boolean {
+        return localStorage.getItem('token') != null;
+    };
 
     public render() {
+        if(localStorage.getItem('token') != null) {
+            console.log(">>> logged in: " + localStorage.getItem('token'));
+        }
+
         return(
-            <Router history={history}>
-                <div id="app-router">
-                    <div id="menu" className="menu-bar">
-                        <Nav defaultActiveKey="/home" as="ul" className="navbar-component">
-                            <Nav.Item as="li" className="active">
-                                <Link to="/">Home</Link>
-                            </Nav.Item>
+        <Router history={history}>
+            <div id="app-router">
+                <div id="menu" className="menu-bar">
+                    <Nav defaultActiveKey="/home" as="ul" className="navbar-component">
+                        <Nav.Item as="li" className="active">
+                            <Link to="/">Home</Link>
+                        </Nav.Item>
+                        <Nav.Item as="li">
+                            <Link to="/login">Login</Link>
+                        </Nav.Item>
+                        <Nav.Item as="li">
+                            <Link to="/about">About</Link>
+                        </Nav.Item>
+                        {this.isLoggedIn() ?
                             <Nav.Item as="li">
-                                <Link to="/login">Login</Link>
-                            </Nav.Item>
-                            <Nav.Item as="li">
-                                <Link to="/about">About</Link>
-                            </Nav.Item>
-                        </Nav>
-                    </div>
-                    <div id="body">
-                        <Switch>
-                            <Route exact path='/' component={Home}/>
-                            <Route exact path='/about' component={About}/>
-                            <Route path='/login' component={
-                                () => <LoginFormProvider>{this.props.children}</LoginFormProvider>
-                            } />
-                            <Route component={PageNotFound}/>
-                        </Switch>
-                    </div>
+                                <Link onClick={
+                                    logoutAction()
+                                } to="/">Logout</Link>
+                            </Nav.Item> : ""
+                        }
+                    </Nav>
                 </div>
-            </Router>
-        )
-    }
+                <div id="body">
+                    <Switch>
+                        <Route exact path='/' component={Home}/>
+                        <Route exact path='/about' component={About}/>
+                        <Route path='/login' component={
+                            () => <LoginFormProvider children={this.props.children} />
+                        } />
+                        <Route component={PageNotFound}/>
+                    </Switch>
+                </div>
+            </div>
+        </Router>
+    )
+}
 }
 
-export default AppRouter;
+const mapStateToPropsAppRouter = (state) => {
+    return {
+        isLoginPending: state.isLoginPending,
+        isLoginSuccess: state.isLoginSuccess,
+        loginError: state.loginError
+    };
+};
+
+export default connect(mapStateToPropsAppRouter)(AppRouter);

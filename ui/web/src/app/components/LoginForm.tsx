@@ -24,40 +24,51 @@ class LoginForm extends Component<IProps, IState> {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  public isLoggedIn(): boolean {
+    return localStorage.getItem('token') != null;
+  };
+
   public render() {
     let { email, password } = this.state;
     let { isLoginPending, isLoginSuccess, loginError } = this.props;
-    return (
-      <div className="col-md-6 col-md-offset-3">
-        <h2>Login</h2>
-        <form name="form" onSubmit={this.onSubmit}>
-          <div className="form-group-collection">
-            <div className="form-group">
-              <label>Email:</label>
-              <input disabled={isLoginPending} type="text" className="form-control" name="email"
-                     onChange={e => this.setState({ email: e.target.value })} value={email} />
-            </div>
 
-            <div className="form-group">
-              <label>Password:</label>
-              <input disabled={isLoginPending} type="password" className="form-control" name="password"
-                     onChange={e => this.setState({ password: e.target.value })} value={password} />
-            </div>
+    if(this.isLoggedIn()) {
+      return (
+          <h1>You are logged in.</h1>
+      );
+    } else {
+      return (
+          <div className="col-md-6 col-md-offset-3">
+            <h2>Login</h2>
+            <form name="form" onSubmit={this.onSubmit}>
+              <div className="form-group-collection">
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input disabled={isLoginPending} type="text" className="form-control" name="email"
+                         onChange={e => this.setState({email: e.target.value})} value={email}/>
+                </div>
+
+                <div className="form-group">
+                  <label>Password:</label>
+                  <input disabled={isLoginPending} type="password" className="form-control" name="password"
+                         onChange={e => this.setState({password: e.target.value})} value={password}/>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <button disabled={isLoginPending} className="btn btn-primary">Login</button>
+              </div>
+
+              <div className="message">
+                {isLoginPending && <div>Please wait...</div>}
+                {loginError && <div>{loginError}</div>}
+              </div>
+
+              {isLoginSuccess && <Secret/>}
+            </form>
           </div>
-
-          <div className="form-group">
-            <button disabled={isLoginPending} className="btn btn-primary">Login</button>
-          </div>
-
-          <div className="message">
-            {isLoginPending && <div>Please wait...</div>}
-            {loginError && <div>{loginError}</div>}
-          </div>
-
-          {isLoginSuccess && <Secret/>}
-        </form>
-      </div>
-    )
+      )
+    }
   }
 
   public onSubmit(e) {

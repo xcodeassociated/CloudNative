@@ -17,6 +17,13 @@ export default function rootReducer(state = {}, action) {
         loginError: action.loginError
       });
 
+    case actions.LOGOUT:
+      return Object.assign({}, state, {
+        isLoginPending: false,
+        isLoginSuccess: false,
+        loginError: null
+      });
+
     default:
       return state;
   }
