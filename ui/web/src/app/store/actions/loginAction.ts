@@ -1,4 +1,4 @@
-import { loginService } from '../services/login'
+import { LoginService } from '../../services/LoginService'
 
 export const actions = {
   SET_LOGIN_PENDING: 'SET_LOGIN_PENDING',
@@ -6,13 +6,13 @@ export const actions = {
   SET_LOGIN_ERROR: 'SET_LOGIN_ERROR'
 };
 
-export function login(email:string, password:string) {
+export function loginAction(email:string, password:string) {
   return dispatch => {
     dispatch(setLoginPending(true));
     dispatch(setLoginSuccess(false));
     dispatch(setLoginError(null));
 
-    loginService.login(email, password).then(
+    LoginService.login(email, password).then(
       token => {
         // eslint-disable-next-line @typescript-eslint/no-angle-bracket-type-assertion
         // @ts-ignore

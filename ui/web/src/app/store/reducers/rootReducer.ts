@@ -1,4 +1,4 @@
-import { actions } from '../actions/login'
+import { actions } from '../actions/loginAction'
 
 export default function rootReducer(state = {}, action) {
   switch (action.type) {

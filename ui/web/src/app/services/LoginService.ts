@@ -1,10 +1,11 @@
-import {config} from '../config/config'
+import {appConfig} from '../config/appConfig'
 
-export const loginService = {
-  login
+// service object
+export const LoginService = {
+  login: loginService
 };
 
-function login(username, password): Promise<Response> {
+function loginService(username, password): Promise<Response> {
   const requestOptions = {
     method: 'POST',
     headers: [['Content-Type', 'application/json'], ['Accept', 'application/json']],
@@ -13,7 +14,7 @@ function login(username, password): Promise<Response> {
     })
   };
 
-  return fetch(`${config.backend_url}/api/gateway/resource/login`, requestOptions)
+  return fetch(`${appConfig.backend_url}/api/gateway/resource/login`, requestOptions)
       .catch(() => {
         return Promise.reject('Backend not reachable');
       })

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { login } from '../actions/login'
+import { loginAction } from '../store/actions/loginAction'
 import Secret from './Secret'
 
 interface IProps {
@@ -63,7 +63,7 @@ class LoginForm extends Component<IProps, IState> {
   public onSubmit(e) {
     e.preventDefault();
     let { email, password } = this.state;
-    this.props.dispatch(login(email, password));
+    this.props.dispatch(loginAction(email, password));
   }
 }
 

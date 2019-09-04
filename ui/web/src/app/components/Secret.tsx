@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { config } from '../config/config'
+import { appConfig } from '../config/appConfig'
 
 interface IState {
   secretContent?: string;
@@ -25,7 +25,7 @@ class Secret extends Component<object, IState> {
       }
     };
 
-    fetch(`${config.backend_url}/api/gateway/resource/reservations`, requestOptions).then(onFetch)
+    fetch(`${appConfig.backend_url}/api/gateway/resource/reservations`, requestOptions).then(onFetch)
   }
 
   public render() {
