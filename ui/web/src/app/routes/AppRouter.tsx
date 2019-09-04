@@ -10,6 +10,7 @@ import history from './history';
 import '../style/AppRouter.css';
 import { connect } from 'react-redux';
 import { logoutAction } from '../store/actions/loginAction'
+import Reservations from "../components/Reservations";
 
 type NamedProps = {
     data?: any
@@ -46,9 +47,15 @@ class AppRouter extends Component<PropsAppRouter, IStateAppRouter> {
                         <Nav.Item as="li" className="active">
                             <Link to="/">Home</Link>
                         </Nav.Item>
-                        <Nav.Item as="li">
-                            <Link to="/login">Login</Link>
-                        </Nav.Item>
+                        {!this.isLoggedIn() ?
+                            <Nav.Item as="li">
+                                <Link to="/login">Login</Link>
+                            </Nav.Item>
+                            :
+                            <Nav.Item as="li">
+                                <Link to="/reservations">Reservations</Link>
+                            </Nav.Item>
+                        }
                         <Nav.Item as="li">
                             <Link to="/about">About</Link>
                         </Nav.Item>
@@ -64,6 +71,7 @@ class AppRouter extends Component<PropsAppRouter, IStateAppRouter> {
                 <div id="body">
                     <Switch>
                         <Route exact path='/' component={Home}/>
+                        <Route exact path='/reservations' component={Reservations}/>
                         <Route exact path='/about' component={About}/>
                         <Route path='/login' component={
                             () => <LoginFormProvider children={this.props.children} />

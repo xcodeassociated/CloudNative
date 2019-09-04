@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { loginAction } from '../store/actions/loginAction'
-import Secret from './Secret'
+import { Redirect } from 'react-router-dom'
 
 interface IProps {
   isLoginPending: boolean;
@@ -33,9 +33,7 @@ class LoginForm extends Component<IProps, IState> {
     let { isLoginPending, isLoginSuccess, loginError } = this.props;
 
     if(this.isLoggedIn()) {
-      return (
-          <h1>You are logged in.</h1>
-      );
+      return (<Redirect to='/' />);
     } else {
       return (
           <div className="col-md-6 col-md-offset-3">
@@ -63,8 +61,6 @@ class LoginForm extends Component<IProps, IState> {
                 {isLoginPending && <div>Please wait...</div>}
                 {loginError && <div>{loginError}</div>}
               </div>
-
-              {isLoginSuccess && <Secret/>}
             </form>
           </div>
       )
