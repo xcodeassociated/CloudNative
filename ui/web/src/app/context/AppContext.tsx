@@ -35,52 +35,48 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
     };
 
     public render() {
-        if(localStorage.getItem('token') != null) {
-            console.log(">>> logged in: " + localStorage.getItem('token'));
-        }
-
         return(
-        <Router history={history}>
-            <div id="app-router">
-                <div id="menu" className="menu-bar">
-                    <Nav defaultActiveKey="/home" as="ul" className="navbar-component">
-                        <Nav.Item as="li" className="active">
-                            <Link to="/">Home</Link>
-                        </Nav.Item>
-                        {!this.isLoggedIn() ?
-                            <Nav.Item as="li">
-                                <Link to="/login">Login</Link>
+            <Router history={history}>
+                <div id="app-router">
+                    <div id="menu" className="menu-bar">
+                        <Nav defaultActiveKey="/home" as="ul" className="navbar-component">
+                            <Nav.Item as="li" className="active">
+                                <Link to="/">Home</Link>
                             </Nav.Item>
-                            :
+                            {!this.isLoggedIn() ?
+                                <Nav.Item as="li">
+                                    <Link to="/login">Login</Link>
+                                </Nav.Item>
+                                :
+                                <Nav.Item as="li">
+                                    <Link to="/reservations">Reservations</Link>
+                                </Nav.Item>
+                            }
                             <Nav.Item as="li">
-                                <Link to="/reservations">Reservations</Link>
+                                <Link to="/about">About</Link>
                             </Nav.Item>
-                        }
-                        <Nav.Item as="li">
-                            <Link to="/about">About</Link>
-                        </Nav.Item>
-                        {this.isLoggedIn() ?
-                            <Nav.Item as="li">
-                                <Link onClick={
-                                    logoutAction()
-                                } to="/">Logout</Link>
-                            </Nav.Item> : ""
-                        }
-                    </Nav>
+                            {this.isLoggedIn() ?
+                                <Nav.Item as="li">
+                                    <Link onClick={
+                                        logoutAction()
+                                    } to="/">Logout</Link>
+                                </Nav.Item> : ""
+                            }
+                        </Nav>
+                    </div>
+                    <div id="body">
+                        <Switch>
+                            <Route exact path='/' component={Home}/>
+                            <Route exact path='/reservations' component={Reservations}/>
+                            <Route exact path='/about' component={About}/>
+                            <Route path='/login' component={
+                                () => <LoginFormProvider children={this.props.children} />
+                            } />
+                            <Route component={PageNotFound}/>
+                        </Switch>
+                    </div>
                 </div>
-                <div id="body">
-                    <Switch>
-                        <Route exact path='/' component={Home}/>
-                        <Route exact path='/reservations' component={Reservations}/>
-                        <Route exact path='/about' component={About}/>
-                        <Route path='/login' component={
-                            () => <LoginFormProvider children={this.props.children} />
-                        } />
-                        <Route component={PageNotFound}/>
-                    </Switch>
-                </div>
-            </div>
-        </Router>
+            </Router>
     )
 }
 }

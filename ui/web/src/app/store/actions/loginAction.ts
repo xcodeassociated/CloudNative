@@ -15,6 +15,10 @@ export function loginAction(email:string, password:string): any {
 
     LoginService.login(email, password).then(
       token => {
+        let jwtDecode: any = require('jwt-decode');
+        let decoded = jwtDecode(token["token"]);
+        // console.log("decoded: " + JSON.stringify(decoded));
+
         localStorage.setItem('token', token["token"]);
         dispatch(setLoginPending(false));
         dispatch(setLoginSuccess(true));
