@@ -56,8 +56,8 @@ class Reservations extends Component<object, IState> {
               </MDBTableHead>
               <MDBTableBody>
                 {this.state.reservations
-                    .map((reservation: Reservation) =>
-                        <tr className="reservation-item">
+                    .map((reservation: Reservation, index: number) =>
+                        <tr key={index} className="reservation-item">
                           <td>{reservation.id}</td>
                           <td>{reservation.reservationName}</td>
                         </tr>)}

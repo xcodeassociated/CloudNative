@@ -9,15 +9,14 @@ import {Link, Router} from 'react-router-dom';
 import history from './history';
 import '../style/AppRouter.css';
 import { connect } from 'react-redux';
-import { logoutAction } from '../store/actions/loginAction'
 import Reservations from "../components/Reservations";
+import LogoutProvider from "../components/LogoutProvider";
 
 type NamedProps = {
     data?: any
 }
 
 type PropsAppRouter = {
-    dispatch: Function
     children: ReactChild | NamedProps
 }
 
@@ -57,9 +56,7 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                             </Nav.Item>
                             {this.isLoggedIn() ?
                                 <Nav.Item as="li">
-                                    <Link onClick={
-                                        logoutAction()
-                                    } to="/">Logout</Link>
+                                    <Link to="/logout">Logout</Link>
                                 </Nav.Item> : ""
                             }
                         </Nav>
@@ -69,8 +66,11 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                             <Route exact path='/' component={Home}/>
                             <Route exact path='/reservations' component={Reservations}/>
                             <Route exact path='/about' component={About}/>
-                            <Route path='/login' component={
+                            <Route exact path='/login' component={
                                 () => <LoginFormProvider children={this.props.children} />
+                            } />
+                            <Route exact path='/logout' component={
+                                () => <LogoutProvider children={this.props.children} />
                             } />
                             <Route component={PageNotFound}/>
                         </Switch>
