@@ -4,8 +4,14 @@ import '../style/Reservations.css'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
 import {Reservation} from "../model/Reservation";
 
+type Error = {
+  code: number,
+  description: string
+}
+
 interface IState {
-  reservations: Array<Reservation>;
+  reservations?: Array<Reservation>;
+  error?: Error
 }
 
 class Reservations extends Component<object, IState> {
@@ -13,7 +19,8 @@ class Reservations extends Component<object, IState> {
   constructor(props: object) {
     super(props);
     this.state = {
-      reservations: []
+      reservations: undefined,
+      error: undefined
     };
   }
 
@@ -26,17 +33,34 @@ class Reservations extends Component<object, IState> {
     if (this.hasToken()) {
       const requestOptions = {
         method: 'GET',
-        headers: [['Content-Type', 'application/json'], ['Accept', 'application/json'], ['Authorization', `Bearer ${token}`]],
+        headers: [
+            ['Content-Type', 'application/json'],
+            ['Accept', 'application/json'],
+            ['Authorization', `Bearer ${token}`]
+        ],
       };
 
       const onFetch = (response: Response) => {
         if (response.ok) {
+            response.text().then(text => {
+              let objects: Array<Reservation> = JSON.parse(text);
+              this.setState({
+                  ...this.state,
+                reservations: objects
+              })
+            }
+          )
+        } else {
           response.text().then(text => {
-            let objects: Array<Reservation> = JSON.parse(text);
-            this.setState({reservations: objects})
-          })
+            this.setState({
+              ...this.state,
+              error: {
+                code: response.status,
+                description: text
+              }
+            });
+          });
         }
-        // todo: error printing
       };
 
       fetch(`${appConfig.backend_url}/api/gateway/resource/reservations`, requestOptions).then(onFetch)
@@ -44,7 +68,7 @@ class Reservations extends Component<object, IState> {
   }
 
   public render() {
-    if (this.hasToken()) {
+    if (this.hasToken() && this.state.error === undefined) {
       return (
           <div id="reservations-list">
             <MDBTable>
@@ -55,18 +79,38 @@ class Reservations extends Component<object, IState> {
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
-                {this.state.reservations
-                    .map((reservation: Reservation, index: number) =>
-                        <tr key={index} className="reservation-item">
-                          <td>{reservation.id}</td>
-                          <td>{reservation.reservationName}</td>
-                        </tr>)}
+                {this.state.reservations !== undefined ?
+                    this.state.reservations
+                      .map((reservation: Reservation, index: number) =>
+                          <tr key={index} className="reservation-item">
+                            <td>{reservation.id}</td>
+                            <td>{reservation.reservationName}</td>
+                          </tr>)
+                    : undefined
+                }
               </MDBTableBody>
           </MDBTable>
           </div>
       );
     } else {
-      return (<h1>Unauthorized</h1>)
+      return (
+          <div id ="reservations-error">
+            <div id="reservations-error-code" >
+              <h2>
+              {this.state.error !== undefined ?
+                  this.state.error.code
+                  : null}
+              </h2>
+            </div>
+            <div id="reservations-error-description">
+              <p>
+                {this.state.error !== undefined ?
+                  this.state.error.description
+                    : null}
+              </p>
+            </div>
+          </div>
+      )
     }
   }
 }
