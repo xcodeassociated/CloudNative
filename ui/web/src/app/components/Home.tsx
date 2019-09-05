@@ -1,11 +1,16 @@
 import React, {Component} from "react";
 
-class Home extends Component {
+interface IHomeProps {
+    param?: string;
+}
+
+class Home extends Component<IHomeProps> {
 
     public render() {
         return(
-            <div>
+            <div id="home">
                 <p>Home Page</p>
+                {this.props.param !== undefined ? <p>Param: {this.props.param}</p> : ""}
             </div>
         )
     }

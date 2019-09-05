@@ -34,7 +34,7 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
     };
 
     public render() {
-        return(
+        return (
             <Router history={history}>
                 <div id="app-router">
                     <div id="menu" className="menu-bar">
@@ -64,21 +64,30 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                     <div id="body">
                         <Switch>
                             <Route exact path='/' component={Home}/>
+                            <Route exact path='/home/:param?' component={HomeParam}/>
                             <Route exact path='/reservations' component={Reservations}/>
                             <Route exact path='/about' component={About}/>
                             <Route exact path='/login' component={
-                                () => <LoginFormProvider children={this.props.children} />
-                            } />
+                                () => <LoginFormProvider children={this.props.children}/>
+                            }/>
                             <Route exact path='/logout' component={
-                                () => <LogoutProvider children={this.props.children} />
-                            } />
+                                () => <LogoutProvider children={this.props.children}/>
+                            }/>
                             <Route component={PageNotFound}/>
                         </Switch>
                     </div>
                 </div>
             </Router>
-    )
+        );
+    }
 }
+
+function HomeParam({ match }): any {
+    return (
+        <div>
+            <Home param={match.params.param}/>
+        </div>
+    );
 }
 
 const mapStateToPropsAppRouter = (state) => {
