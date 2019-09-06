@@ -1,0 +1,36 @@
+Data base schema draft:
+
+// user service
+user:
+	id, name, lastname, e-mail, password (SHA256), role (ROLE_USER, ROLE_ADMIN), date
+	
+user relation:
+	id, type (FRIEND, ?), id_person_a[foreign: user.id, index], id_person_b[foreign: user.id, index], date
+		
+group:
+	id, name, isPublic, date
+
+group members
+	id, id_person[foreign: user.id, index], id_group[foreign: group.id, index], role (MEMBER, ADMIN, MODERATOR), date
+
+// event service	
+
+event:
+	id, name, created_date, isPublic, location_latitude, location_longitude
+
+event history:
+	id, id_event, id_person, change(CREATE, UPDATE, REMOVED), date
+	
+event comment:
+	id, id_event, id_person, text, date
+	
+event rate:
+	id, id_event, id_person, rate (0...5), date
+
+// event locator service
+
+{
+	event_id,
+	location_latitude,
+	location_longitude
+}
