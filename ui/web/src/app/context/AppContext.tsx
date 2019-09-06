@@ -5,7 +5,7 @@ import About from "../components/About";
 import LoginFormProvider from "../components/LoginFormProvider";
 import PageNotFound from "../components/PageNotFound";
 import {Nav} from "react-bootstrap";
-import {Link, Router} from 'react-router-dom';
+import {NavLink, Router} from 'react-router-dom';
 import history from './history';
 import '../style/AppRouter.css';
 import { connect } from 'react-redux';
@@ -39,24 +39,24 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                 <div id="app-router">
                     <div id="menu" className="menu-bar">
                         <Nav defaultActiveKey="/home" as="ul" className="navbar-component">
-                            <Nav.Item as="li" className="active">
-                                <Link to="/">Home</Link>
+                            <Nav.Item as="li">
+                                <NavLink className="nav-link" activeClassName="active" to="/" exact>Home</NavLink>
                             </Nav.Item>
                             {!this.isLoggedIn() ?
                                 <Nav.Item as="li">
-                                    <Link to="/login">Login</Link>
+                                    <NavLink className="nav-link" activeClassName="active" to="/login">Login</NavLink>
                                 </Nav.Item>
                                 :
                                 <Nav.Item as="li">
-                                    <Link to="/reservations">Reservations</Link>
+                                    <NavLink className="nav-link" activeClassName="active" to="/reservations">Reservations</NavLink>
                                 </Nav.Item>
                             }
                             <Nav.Item as="li">
-                                <Link to="/about">About</Link>
+                                <NavLink className="nav-link" activeClassName="active" to="/about">About</NavLink>
                             </Nav.Item>
                             {this.isLoggedIn() ?
                                 <Nav.Item as="li">
-                                    <Link to="/logout">Logout</Link>
+                                    <NavLink className="nav-link" activeClassName="active" to="/logout">Logout</NavLink>
                                 </Nav.Item> : ""
                             }
                         </Nav>
