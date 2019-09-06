@@ -1,4 +1,4 @@
-import { LoginService } from '../../services/LoginService'
+import {LoginService} from '../../services/LoginService'
 
 export const actions = {
   SET_LOGIN_PENDING: 'SET_LOGIN_PENDING',
@@ -7,7 +7,7 @@ export const actions = {
   LOGOUT: 'LOGOUT'
 };
 
-export function loginAction(email:string, password:string): any {
+export function loginAction(email: string, password: string): any {
   return dispatch => {
     dispatch(setLoginPending(true));
     dispatch(setLoginSuccess(false));

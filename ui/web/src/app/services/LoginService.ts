@@ -10,19 +10,19 @@ function loginService(username, password): Promise<Response> {
     method: 'POST',
     headers: [['Content-Type', 'application/json'], ['Accept', 'application/json']],
     body: JSON.stringify({
-       username: username, password: password
+      username: username, password: password
     })
   };
 
   return fetch(`${appConfig.backend_url}/api/gateway/resource/login`, requestOptions)
-      .catch(() => {
-        return Promise.reject('Backend not reachable');
-      })
-      .then(function (response: Response): any {
-        if (!response.ok) {
-          return Promise.reject(response.statusText);
-        } else {
-          return response.json();
-        }
-      });
+    .catch(() => {
+      return Promise.reject('Backend not reachable');
+    })
+    .then(function (response: Response): any {
+      if (!response.ok) {
+        return Promise.reject(response.statusText);
+      } else {
+        return response.json();
+      }
+    });
 }

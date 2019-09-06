@@ -1,4 +1,4 @@
 export interface Reservation {
-    id: string;
-    reservationName: number;
+  id: string;
+  reservationName: number;
 }
