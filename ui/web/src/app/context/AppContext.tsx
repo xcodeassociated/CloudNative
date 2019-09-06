@@ -57,7 +57,7 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                             {this.isLoggedIn() ?
                                 <Nav.Item as="li">
                                     <NavLink className="nav-link" activeClassName="active" to="/logout">Logout</NavLink>
-                                </Nav.Item> : ""
+                                </Nav.Item> : null
                             }
                         </Nav>
                     </div>

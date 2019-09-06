@@ -10,7 +10,7 @@ class Home extends Component<IHomeProps> {
         return(
             <div id="home">
                 <p>Home Page</p>
-                {this.props.param !== undefined ? <p>Param: {this.props.param}</p> : ""}
+                {this.props.param !== undefined ? <p>Param: {this.props.param}</p> : null}
             </div>
         )
     }

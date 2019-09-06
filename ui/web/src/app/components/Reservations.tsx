@@ -86,7 +86,7 @@ class Reservations extends Component<object, IState> {
                             <td>{reservation.id}</td>
                             <td>{reservation.reservationName}</td>
                           </tr>)
-                    : undefined
+                    : null
                 }
               </MDBTableBody>
           </MDBTable>
