@@ -1,30 +1,43 @@
 Data base schema draft:
 
-// user service
+// user service - SQL:
 user:
 	id, name, lastname, e-mail, password (SHA256), role (ROLE_USER, ROLE_ADMIN), date
 	
-user relation:
+user_relation:
 	id, type (FRIEND, ?), id_person_a[foreign: user.id, index], id_person_b[foreign: user.id, index], date
-		
+
 group:
-	id, name, isPublic, date
+	id, name, is_public, date
 
-group members
+group_members
 	id, id_person[foreign: user.id, index], id_group[foreign: group.id, index], role (MEMBER, ADMIN, MODERATOR), date
+ 
+user_photo:
+	id, id_user[foreign: user.id, index], file_path, file_size (?), is_public, date
+	
+user_album:
+	id, id_user[foreign: user.id, index], title, date, is_public
+	
+user_album_entry:	
+	id, id_album[foreign: user_album.id, index], id_photo[foreign: user_photo.id, index], date, is_public
+		
 
-// event service	
+// event_service	
 
 event:
-	id, name, created_date, isPublic, location_latitude, location_longitude
+	id, name, created_date, is_public, location_latitude, location_longitude
 
-event history:
+event_history:
 	id, id_event, id_person, change(CREATE, UPDATE, REMOVED), date
 	
-event comment:
+user_event_history:
+	id, id_event, id_person, action(SIGNED_IN, SIGNED_OUT, ATTENDED), date
+
+event_comment:
 	id, id_event, id_person, text, date
 	
-event rate:
+event_rate:
 	id, id_event, id_person, rate (0...5), date
 
 // event locator service
