@@ -8,6 +8,9 @@ zuul:
     event:
       path: /event/**
       serviceId: EVENT-SERVICE
+    user:
+        path: /user/**
+        serviceId: USER-SERVICE
 
 eureka:
   client:
