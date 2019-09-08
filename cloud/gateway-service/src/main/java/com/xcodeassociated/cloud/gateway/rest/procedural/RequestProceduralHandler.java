@@ -1,7 +1,5 @@
 package com.xcodeassociated.cloud.gateway.rest.procedural;
 
-import com.xcodeassociated.cloud.gateway.event.RabbitEventHandler;
-import com.xcodeassociated.cloud.gateway.event.RabbitQueueSender;
 import com.xcodeassociated.cloud.gateway.model.Message;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,8 +34,6 @@ public class RequestProceduralHandler {
 	@Autowired
 	private WebClient.Builder client;
 
-	@Autowired
-	RabbitQueueSender queueSender;
 
 	@Bean
 	@LoadBalanced
@@ -46,32 +42,6 @@ public class RequestProceduralHandler {
 	}
 
 	// public
-
-	// rabbitMQ
-	@RequestMapping(value = "/pub-api/rabbit", method = RequestMethod.GET, params = {"message"})
-	public Mono<String> rabbit(@RequestParam(value = "message") String data) throws IOException {
-		try {
-			this.queueSender.basicPublish(data);
-			return Mono.just("Message: {" + data + "} has been sent.");
-		} catch (Exception exception) {
-			return Mono.just(exception.getMessage());
-		}
-	}
-
-	@RequestMapping(value = "/pub-api/rabbit-rpc", method = RequestMethod.GET)
-	public Mono<String> rabbitRPC(@RequestParam("message") String data) {
-		try (RabbitEventHandler client = new RabbitEventHandler()) {
-			log.info(" [x] Requesting: {" + data + "}");
-			String response = client.call(data);
-			log.info(" [.] Got '" + response + "'");
-			return Mono.just("{" + response + "}");
-		} catch (IOException | TimeoutException | InterruptedException e) {
-			e.printStackTrace();
-			return Mono.just("Error occurred");
-		}
-	}
-	// ! rabbitMQ
-
 
 	@RequestMapping(value = "/pub-api/path/{message}", method = RequestMethod.GET)
 	public Mono<String> pathVar(@PathVariable String message) throws IOException {
@@ -157,7 +127,7 @@ public class RequestProceduralHandler {
 	public Mono<ResponseEntity<?>> user() {
 		return Mono.just(ResponseEntity.ok(new Message("Content for user")));
 	}
-	
+
 	@RequestMapping(value = "/resource/user-or-admin", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public Mono<ResponseEntity<?>> userOrAdmin() {

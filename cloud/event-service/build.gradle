@@ -13,7 +13,7 @@ targetCompatibility = '11'
 configurations {
 	compile.exclude group:'ch.qos.logback'
 	all*.exclude module : 'spring-boot-starter-logging'
-	
+
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -43,7 +43,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
-	compile("org.springframework.boot:spring-boot-starter-amqp")
 	testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
