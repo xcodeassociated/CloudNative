@@ -1,6 +1,7 @@
 package com.xcodeassociated.cloud.user.service;
 
-import com.xcodeassociated.cloud.user.dto.UserQueryDto;
+import com.xcodeassociated.cloud.user.dto.UserQueryRequestDto;
+import com.xcodeassociated.cloud.user.dto.UserQueryResponseDto;
 import com.xcodeassociated.cloud.user.model.User;
 import com.xcodeassociated.cloud.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -15,21 +16,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Optional<UserQueryDto> getUserByData(UserQueryDto request) {
-        Optional<User> user = Optional.ofNullable(this.getUserByUsernameAndPasswordAndRole(request));
+    public Optional<UserQueryResponseDto> getUserByData(UserQueryRequestDto request) {
+        Optional<User> user = Optional.ofNullable(this.getUserByUsernameAndPassword(request));
         if (user.isPresent()) {
-            return Optional.of(this.dtoBuilder(user.get()));
+            return Optional.of(this.userQueryResponseDtoBuilder(user.get()));
         } else {
             return Optional.empty();
         }
     }
 
-    private User getUserByUsernameAndPasswordAndRole(UserQueryDto request) {
-        return this.userRepository.findUserByUsernameAndPasswordAndRole
-            (request.getUsername(), request.getPassword(), request.getRole());
+    private User getUserByUsernameAndPassword(UserQueryRequestDto request) {
+        return this.userRepository.findUserByUsernameAndPassword(request.getUsername(), request.getPassword());
     }
 
-    private UserQueryDto dtoBuilder(User user) {
-        return new UserQueryDto(user.getUsername(), user.getPassword(), user.getRole());
+    private UserQueryResponseDto userQueryResponseDtoBuilder(User user) {
+        return new UserQueryResponseDto(user.getUsername(), user.getPassword(), user.getRole());
     }
 }

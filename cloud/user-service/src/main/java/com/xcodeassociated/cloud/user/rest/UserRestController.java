@@ -1,6 +1,7 @@
 package com.xcodeassociated.cloud.user.rest;
 
-import com.xcodeassociated.cloud.user.dto.UserQueryDto;
+import com.xcodeassociated.cloud.user.dto.UserQueryRequestDto;
+import com.xcodeassociated.cloud.user.dto.UserQueryResponseDto;
 import com.xcodeassociated.cloud.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,8 +22,8 @@ public class UserRestController {
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.POST)
-    Mono<ResponseEntity<?>> getUserByNameAndPasswordAndRole(@RequestBody UserQueryDto request) {
-        Optional<UserQueryDto> userQueryDto = userService.getUserByData(request);
+    Mono<ResponseEntity<?>> getUserByNameAndPassword(@RequestBody UserQueryRequestDto request) {
+        Optional<UserQueryResponseDto> userQueryDto = userService.getUserByData(request);
         if (userQueryDto.isPresent()) {
             return Mono.just(ResponseEntity.ok(userQueryDto.get()));
         } else {
