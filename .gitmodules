@@ -1,6 +1,0 @@
-[submodule "cloud/zipkin"]
-	path = cloud/zipkin
-	url = git@github.com:apache/incubator-zipkin.git
-[submodule "cloud/config/cloud_config"]
-	path = cloud/config/cloud_config
-	url = git@github.com:xcodeassociated/bootiful-reactive-microservices-config.git
