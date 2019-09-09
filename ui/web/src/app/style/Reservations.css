@@ -1,6 +1,10 @@
 #reservations-list {
 }
 
+.reservations-list-table-header-create-event {
+  width: 100%;
+}
+
 .reservations-list-table-header-id {
   width: 20%;
 }

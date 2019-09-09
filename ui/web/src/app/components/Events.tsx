@@ -10,8 +10,11 @@ type Error = {
 }
 
 interface IState {
-  reservations?: Array<Event>;
-  error?: Error
+  events?: Array<Event>;
+  error?: Error,
+  eventCreateName: string,
+  eventDeleteId: string,
+  dispatch: Function
 }
 
 class Events extends Component<object, IState> {
@@ -19,9 +22,15 @@ class Events extends Component<object, IState> {
   constructor(props: object) {
     super(props);
     this.state = {
-      reservations: undefined,
-      error: undefined
+      events: undefined,
+      error: undefined,
+      eventCreateName: "",
+      eventDeleteId: "",
+      dispatch: () => {}
     };
+
+    this.onCreateSubmit = this.onCreateSubmit.bind(this);
+    this.onDeleteSubmit = this.onDeleteSubmit.bind(this);
   }
 
   public hasToken(): boolean {
@@ -46,7 +55,7 @@ class Events extends Component<object, IState> {
               let objects: Array<Event> = JSON.parse(text);
               this.setState({
                 ...this.state,
-                reservations: objects
+                events: objects
               })
             }
           )
@@ -67,12 +76,56 @@ class Events extends Component<object, IState> {
     }
   }
 
+  private createEvent(eventName: string) {
+    console.log("event create: " + eventName);
+
+  }
+
+  public onCreateSubmit(e: any) {
+    e.preventDefault();
+    this.state.dispatch(this.createEvent(this.state.eventCreateName));
+  }
+
+  private deleteEvent(eventId: string) {
+    console.log("event delete: " + eventId);
+
+  }
+
+  public onDeleteSubmit(e: any) {
+    e.preventDefault();
+    let id = e.target.eventId.value;
+    this.setState({eventDeleteId: id});
+    this.state.dispatch(this.deleteEvent(id));
+  }
+
   public render() {
     if (this.hasToken() && this.state.error === undefined) {
-      console.log(JSON.stringify(this.state.reservations));
-
+      console.log(JSON.stringify(this.state.events));
+      let {eventCreateName} = this.state;
       return (
         <div id="reservations-list">
+          <div id="event-create-form">
+            <MDBTable>
+              <MDBTableBody>
+                <tr>
+                  <td className="reservations-list-table-header-create-event">
+                    <form name="eventCreateForm" onSubmit={this.onCreateSubmit}>
+                      <div className="form-group-collection">
+                        <div className="form-group">
+                          <label>Event Name:</label>
+                          <input type="text" className="form-control" name="email"
+                                 onChange={e => this.setState({eventCreateName: e.target.value})} value={eventCreateName}/>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <button className="btn btn-primary">Create Event</button>
+                      </div>
+                    </form>
+                  </td>
+                </tr>
+              </MDBTableBody>
+            </MDBTable>
+          </div>
           <MDBTable>
             <MDBTableHead>
               <tr className="reservations-list-table-header">
@@ -81,12 +134,18 @@ class Events extends Component<object, IState> {
               </tr>
             </MDBTableHead>
             <MDBTableBody>
-              {this.state.reservations !== undefined ?
-                this.state.reservations
+              {this.state.events !== undefined ?
+                this.state.events
                   .map((reservation: Event, index: number) =>
                     <tr key={index} className="reservation-item">
                       <td>{reservation.eventId}</td>
                       <td>{reservation.eventName}</td>
+                      <td>
+                        <form name="form" onSubmit={this.onDeleteSubmit}>
+                          <input type="hidden" name="eventId" value={reservation.eventId}/>
+                          <button className="btn btn-primary">Delete Event</button>
+                        </form>
+                      </td>
                     </tr>)
                 : null
               }

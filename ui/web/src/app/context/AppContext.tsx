@@ -48,8 +48,7 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                 </Nav.Item>
                 :
                 <Nav.Item as="li">
-                  <NavLink className="nav-link" activeClassName="active"
-                           to="/reservations">Events</NavLink>
+                  <NavLink className="nav-link" activeClassName="active" to="/events">Events</NavLink>
                 </Nav.Item>
               }
               <Nav.Item as="li">
@@ -68,7 +67,7 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
             <Switch>
               <Route exact path='/' component={Home}/>
               <Route exact path='/home/:param?' component={HomeParam}/>
-              <Route exact path='/reservations' component={Events}/>
+              <Route exact path='/events' component={Events}/>
               <Route exact path='/about' component={About}/>
               <Route exact path='/login' component={
                 () => <LoginFormProvider children={this.props.children}/>
