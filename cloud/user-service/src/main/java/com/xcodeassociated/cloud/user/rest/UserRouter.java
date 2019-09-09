@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 
+import java.util.Objects;
+
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 
 @Component
@@ -16,6 +18,6 @@ public class UserRouter {
     RouterFunction<ServerResponse> routes(Environment env) {
         return RouterFunctions
             .route(GET("/router/message"),
-                request -> ServerResponse.ok().body(Flux.just(env.getProperty("message")), String.class));
+                request -> ServerResponse.ok().body(Flux.just(Objects.requireNonNull(env.getProperty("message"))), String.class));
     }
 }
