@@ -8,7 +8,7 @@ import {Nav} from "react-bootstrap";
 import history from './history';
 import '../style/AppRouter.css';
 import {connect} from 'react-redux';
-import Reservations from "../components/Reservations";
+import Events from "../components/Events";
 import LogoutProvider from "../components/LogoutProvider";
 
 type NamedProps = {
@@ -49,7 +49,7 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                 :
                 <Nav.Item as="li">
                   <NavLink className="nav-link" activeClassName="active"
-                           to="/reservations">Reservations</NavLink>
+                           to="/reservations">Events</NavLink>
                 </Nav.Item>
               }
               <Nav.Item as="li">
@@ -66,7 +66,7 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
             <Switch>
               <Route exact path='/' component={Home}/>
               <Route exact path='/home/:param?' component={HomeParam}/>
-              <Route exact path='/reservations' component={Reservations}/>
+              <Route exact path='/reservations' component={Events}/>
               <Route exact path='/about' component={About}/>
               <Route exact path='/login' component={
                 () => <LoginFormProvider children={this.props.children}/>

@@ -1,7 +1,7 @@
 package com.xcodeassociated.cloud.event.bootstrap;
 
-import com.xcodeassociated.cloud.event.model.Reservation;
-import com.xcodeassociated.cloud.event.repository.ReservationRepository;
+import com.xcodeassociated.cloud.event.model.Event;
+import com.xcodeassociated.cloud.event.repository.EventRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,22 +13,22 @@ import reactor.core.publisher.Flux;
 @Component
 @Profile("dev")
 public class BootstrapDataWriter implements ApplicationRunner {
-    private final ReservationRepository reservationRepository;
+    private final EventRepository eventRepository;
 
-    public BootstrapDataWriter(ReservationRepository reservationRepository) {
-        this.reservationRepository = reservationRepository;
+    public BootstrapDataWriter(EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
     }
 
     @Override
     public void run(ApplicationArguments args) {
         log.info("DataWriter Bean Context Started");
-        this.reservationRepository
+        this.eventRepository
                 .deleteAll()
                 .thenMany(
-                        Flux.just("Alice", "Bob", "Mike", "Steve")
-                                .map(name -> new Reservation(null, name))
-                                .flatMap(this.reservationRepository::save))
-                .thenMany(this.reservationRepository.findAll())
+                        Flux.just("Event 1", "Event 2", "Event 3", "Event 4", "Event 5")
+                                .map(name -> new Event(null, name))
+                                .flatMap(this.eventRepository::save))
+                .thenMany(this.eventRepository.findAll())
                 .subscribe(log::debug);
     }
 }

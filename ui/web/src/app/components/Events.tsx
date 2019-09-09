@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {appConfig} from '../config/appConfig'
 import '../style/Reservations.css'
 import {MDBTable, MDBTableBody, MDBTableHead} from 'mdbreact';
-import {Reservation} from "../model/Reservation";
+import {Event} from "../model/Event";
 
 type Error = {
   code: number,
@@ -10,11 +10,11 @@ type Error = {
 }
 
 interface IState {
-  reservations?: Array<Reservation>;
+  reservations?: Array<Event>;
   error?: Error
 }
 
-class Reservations extends Component<object, IState> {
+class Events extends Component<object, IState> {
 
   constructor(props: object) {
     super(props);
@@ -43,7 +43,7 @@ class Reservations extends Component<object, IState> {
       const onFetch = (response: Response) => {
         if (response.ok) {
           response.text().then(text => {
-              let objects: Array<Reservation> = JSON.parse(text);
+              let objects: Array<Event> = JSON.parse(text);
               this.setState({
                 ...this.state,
                 reservations: objects
@@ -63,7 +63,7 @@ class Reservations extends Component<object, IState> {
         }
       };
 
-      fetch(`${appConfig.backend_url}/api/gateway/resource/reservations`, requestOptions).then(onFetch)
+      fetch(`${appConfig.backend_url}/api/v1/gateway/resource/events`, requestOptions).then(onFetch)
     }
   }
 
@@ -81,10 +81,10 @@ class Reservations extends Component<object, IState> {
             <MDBTableBody>
               {this.state.reservations !== undefined ?
                 this.state.reservations
-                  .map((reservation: Reservation, index: number) =>
+                  .map((reservation: Event, index: number) =>
                     <tr key={index} className="reservation-item">
                       <td>{reservation.id}</td>
-                      <td>{reservation.reservationName}</td>
+                      <td>{reservation.eventName}</td>
                     </tr>)
                 : null
               }
@@ -115,4 +115,4 @@ class Reservations extends Component<object, IState> {
   }
 }
 
-export default Reservations;
+export default Events;

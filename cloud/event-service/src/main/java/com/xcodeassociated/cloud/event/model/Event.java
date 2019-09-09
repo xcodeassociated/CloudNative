@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Reservation  {
+public class Event {
     private String id;
-    private String reservationName;
+    private String eventName;
 }
