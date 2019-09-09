@@ -1,8 +1,11 @@
 package com.xcodeassociated.cloud.gateway.security.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.xcodeassociated.cloud.gateway.security.dto.UserQueryResponseServiceDto;
 import com.xcodeassociated.cloud.gateway.security.dto.UserQueryResponseTokenDto;
+import com.xcodeassociated.cloud.gateway.security.model.UserSubject;
 import com.xcodeassociated.cloud.gateway.security.utils.JWTUtil;
 import com.xcodeassociated.cloud.gateway.security.utils.PBKDF2Encoder;
 import com.xcodeassociated.cloud.gateway.security.dto.UserQueryRequestDto;
@@ -43,7 +46,7 @@ public class AuthenticationRestController {
 
     @HystrixCommand(fallbackMethod = "loginFallback")
     @RequestMapping(value = "/resource/login", method = RequestMethod.POST)
-	public Mono<ResponseEntity<?>> login(@RequestBody UserQueryRequestDto userQueryRequestDto) {
+	public Mono<ResponseEntity<?>> login(@RequestBody UserQueryRequestDto userQueryRequestDto) throws JsonProcessingException {
         String password = passwordEncoder.encode(userQueryRequestDto.getPassword());
         String user = userQueryRequestDto.getUsername();
 
@@ -54,8 +57,11 @@ public class AuthenticationRestController {
         if (response.getStatusCode() == HttpStatus.OK) {
             UserQueryResponseServiceDto ret = response.getBody();
             if (ret != null) {
+                UserSubject userSubject = new UserSubject(ret.getId(), ret.getUsername());
                 log.debug(ret);
-                return Mono.just(ResponseEntity.ok(new UserQueryResponseTokenDto(jwtUtil.generateToken(ret))));
+                log.debug(userSubject);
+
+                return Mono.just(ResponseEntity.ok(new UserQueryResponseTokenDto(jwtUtil.generateToken(ret, userSubject))));
             } else {
                 return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
             }
@@ -66,7 +72,7 @@ public class AuthenticationRestController {
 
     @ExceptionHandler({HttpClientErrorException.class})
     public Mono<ResponseEntity<?>> exceptionUserNotFoundExceptionHandler(HttpClientErrorException exception) {
-        return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     public Mono<ResponseEntity<?>> loginFallback(UserQueryRequestDto userQueryRequestDto) {

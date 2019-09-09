@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @ToString
 public class UserQueryResponseServiceDto {
+    private Long id;
     private String username;
     private String password;
     private List<UserRole> roles;

@@ -31,6 +31,6 @@ public class UserService {
     }
 
     private UserQueryResponseDto userQueryResponseDtoBuilder(User user) {
-        return new UserQueryResponseDto(user.getUsername(), user.getPassword(), Arrays.asList(user.getRole()));
+        return new UserQueryResponseDto(user.getId(), user.getUsername(), user.getPassword(), Arrays.asList(user.getRole()));
     }
 }

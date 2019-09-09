@@ -1,6 +1,8 @@
 package com.xcodeassociated.cloud.gateway.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xcodeassociated.cloud.gateway.dto.Message;
+import com.xcodeassociated.cloud.gateway.security.model.UserSubject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -23,6 +25,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 
@@ -104,10 +107,13 @@ public class GatewayRestController {
 	)
 	@RequestMapping(value = "/resource/diag/whoami", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public Mono<String> whoAmI(Authentication authentication, Principal principal) {
-		return Mono.just(new JSONObject()
-				.put("authentication", authentication.getName())
-				.put("principal", principal.getName())
+	public Mono<String> whoAmI(Authentication authentication, Principal principal) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserSubject authSubject = objectMapper.readValue(authentication.getName(), UserSubject.class);
+        UserSubject principalSubject = objectMapper.readValue(principal.getName(), UserSubject.class);
+        return Mono.just(new JSONObject()
+				.put("authentication", authSubject)
+				.put("principal", principalSubject)
 				.toString()
 		);
 	}

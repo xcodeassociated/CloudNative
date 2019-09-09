@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class UserQueryResponseDto {
+    private Long id;
     private String username;
     private String password;
     private List<UserRole> roles;

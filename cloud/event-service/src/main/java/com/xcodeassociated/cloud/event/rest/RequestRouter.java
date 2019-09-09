@@ -28,9 +28,11 @@ public class RequestRouter {
     @Bean
     RouterFunction<ServerResponse> routes(Environment env) {
         return RouterFunctions
-                .route(GET("/router/events"),
-                        serverRequest -> ServerResponse.ok().body(this.eventService.getAllEvents(), EventDto.class))
-                .andRoute(GET("/router/message"),
-                        request -> ServerResponse.ok().body(Flux.just(Objects.requireNonNull(env.getProperty("message"))), String.class));
+            .route(GET("/router/events"),
+                    serverRequest -> ServerResponse.ok().body(this.eventService.getAllEvents(), EventDto.class))
+            .andRoute()
+            .andRoute()
+            .andRoute(GET("/router/message"),
+                    request -> ServerResponse.ok().body(Flux.just(Objects.requireNonNull(env.getProperty("message"))), String.class));
     }
 }

@@ -1,6 +1,9 @@
 package com.xcodeassociated.cloud.gateway.security.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xcodeassociated.cloud.gateway.security.dto.UserQueryResponseServiceDto;
+import com.xcodeassociated.cloud.gateway.security.model.UserSubject;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,20 +44,21 @@ public class JWTUtil implements Serializable {
 		return expiration.before(new Date());
 	}
 
-	public String generateToken(UserQueryResponseServiceDto user) {
+	public String generateToken(UserQueryResponseServiceDto userQueryResponseServiceDto, UserSubject userSubject) throws JsonProcessingException {
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("role", user.getRoles());
-		return doGenerateToken(claims, user.getUsername());
+		claims.put("role", userQueryResponseServiceDto.getRoles());
+		return doGenerateToken(claims, userSubject);
 	}
 
-	private String doGenerateToken(Map<String, Object> claims, String username) {
+	private String doGenerateToken(Map<String, Object> claims, UserSubject userSubject) throws JsonProcessingException {
 		Long expirationTimeLong = Long.parseLong(expirationTime); //in second
-
+        ObjectMapper objectMapper = new ObjectMapper();
 		final Date createdDate = new Date();
+        //todo: control expiration date
 		final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 1000);
 		return Jwts.builder()
 				.setClaims(claims)
-				.setSubject(username)
+				.setSubject(objectMapper.writeValueAsString(userSubject))
 				.setIssuedAt(createdDate)
 				.setExpiration(expirationDate)
 				.signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(secret.getBytes()))

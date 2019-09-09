@@ -16,11 +16,14 @@ export function loginAction(email: string, password: string): any {
     LoginService.login(email, password).then(
       token => {
         let jwtDecode: any = require('jwt-decode');
-        let decoded = jwtDecode(token["token"]);
-        console.log("decoded: " + JSON.stringify(decoded));
+        let data: object = jwtDecode(token["token"]);
+
+        let username: string = JSON.parse(data["sub"])["name"];
+        let id: number = JSON.parse(data["sub"])["id"];
 
         localStorage.setItem('token', token["token"]);
-        localStorage.setItem('username', decoded["sub"]);
+        localStorage.setItem('username', username);
+        localStorage.setItem('userid', String(id));
         dispatch(setLoginPending(false));
         dispatch(setLoginSuccess(true));
       },
@@ -63,6 +66,7 @@ export function logoutAction() {
   return dispatch => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('userid');
     dispatch(setLogout());
   }
 }
