@@ -6,14 +6,14 @@ import lombok.Getter;
 import org.springframework.hateoas.ResourceSupport;
 
 @Getter
-public class EventDto extends ResourceSupport {
+public class EventQueryDto extends ResourceSupport {
     private final String eventId;
     private final String eventName;
     // implicit: Array<Links>
 
     @JsonCreator
-    public EventDto(@JsonProperty("eventId") String eventId,
-                    @JsonProperty("eventName") String eventName) {
+    public EventQueryDto(@JsonProperty("eventId") String eventId,
+                         @JsonProperty("eventName") String eventName) {
         this.eventId = eventId;
         this.eventName = eventName;
     }

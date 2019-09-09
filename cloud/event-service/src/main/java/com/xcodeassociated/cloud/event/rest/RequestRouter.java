@@ -1,10 +1,8 @@
 package com.xcodeassociated.cloud.event.rest;
 
-import com.xcodeassociated.cloud.event.dto.EventDto;
-import com.xcodeassociated.cloud.event.model.Event;
-import com.xcodeassociated.cloud.event.repository.EventRepository;
+import com.xcodeassociated.cloud.event.dto.EventCommandDto;
+import com.xcodeassociated.cloud.event.dto.EventQueryDto;
 import com.xcodeassociated.cloud.event.service.EventService;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -15,7 +13,11 @@ import reactor.core.publisher.Flux;
 
 import java.util.Objects;
 
+import static org.springframework.web.reactive.function.BodyExtractors.toMono;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
+
 
 @Component
 public class RequestRouter {
@@ -29,10 +31,24 @@ public class RequestRouter {
     RouterFunction<ServerResponse> routes(Environment env) {
         return RouterFunctions
             .route(GET("/router/events"),
-                    serverRequest -> ServerResponse.ok().body(this.eventService.getAllEvents(), EventDto.class))
-            .andRoute()
-            .andRoute()
+                    serverRequest -> ServerResponse.ok().body(this.eventService.getAllEvents(),
+                        EventQueryDto.class))
+            .andRoute(POST("/router/create/"),
+                request ->
+                    request.body(toMono(EventCommandDto.class))
+                        .doOnNext(this.eventService::createEvent)
+                        .then(ServerResponse.ok().build()))
+            .andRoute(DELETE("/event/delete"),
+                request ->
+                    request.body(toMono(EventCommandDto.class))
+                    .doOnNext(this.eventService::removeEvent)
+                    .then(ServerResponse.ok().build()))
+
+            // diagnostic api
             .andRoute(GET("/router/message"),
-                    request -> ServerResponse.ok().body(Flux.just(Objects.requireNonNull(env.getProperty("message"))), String.class));
+                    request ->
+                        ServerResponse.ok()
+                            .body(Flux.just(Objects.requireNonNull(env.getProperty("message"))),
+                            String.class));
     }
 }
