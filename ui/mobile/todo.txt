@@ -1,1 +1,0 @@
-### todo: make iOS/Android ReactNative UI Application
