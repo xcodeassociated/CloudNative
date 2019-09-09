@@ -1,7 +1,9 @@
 package com.xcodeassociated.cloud.event.rest;
 
+import com.xcodeassociated.cloud.event.dto.EventDto;
 import com.xcodeassociated.cloud.event.model.Event;
 import com.xcodeassociated.cloud.event.repository.EventRepository;
+import com.xcodeassociated.cloud.event.service.EventService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -17,11 +19,17 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 
 @Component
 public class RequestRouter {
+    private final EventService eventService;
+
+    public RequestRouter(EventService eventService) {
+        this.eventService = eventService;
+    }
+
     @Bean
-    RouterFunction<ServerResponse> routes(EventRepository eventRepository, Environment env) {
+    RouterFunction<ServerResponse> routes(Environment env) {
         return RouterFunctions
                 .route(GET("/router/events"),
-                        serverRequest -> ServerResponse.ok().body(eventRepository.findAll(), Event.class))
+                        serverRequest -> ServerResponse.ok().body(this.eventService.getAllEvents(), EventDto.class))
                 .andRoute(GET("/router/message"),
                         request -> ServerResponse.ok().body(Flux.just(Objects.requireNonNull(env.getProperty("message"))), String.class));
     }

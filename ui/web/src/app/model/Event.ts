@@ -1,4 +1,5 @@
 export interface Event {
-  id: string;
+  eventId: string;
   eventName: string;
+  links: Array<String>
 }

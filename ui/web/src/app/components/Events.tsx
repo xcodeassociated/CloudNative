@@ -69,6 +69,8 @@ class Events extends Component<object, IState> {
 
   public render() {
     if (this.hasToken() && this.state.error === undefined) {
+      console.log(JSON.stringify(this.state.reservations));
+
       return (
         <div id="reservations-list">
           <MDBTable>
@@ -83,7 +85,7 @@ class Events extends Component<object, IState> {
                 this.state.reservations
                   .map((reservation: Event, index: number) =>
                     <tr key={index} className="reservation-item">
-                      <td>{reservation.id}</td>
+                      <td>{reservation.eventId}</td>
                       <td>{reservation.eventName}</td>
                     </tr>)
                 : null
