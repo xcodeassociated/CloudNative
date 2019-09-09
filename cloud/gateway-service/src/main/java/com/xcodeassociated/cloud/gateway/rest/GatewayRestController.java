@@ -1,11 +1,12 @@
-package com.xcodeassociated.cloud.gateway.rest.procedural;
+package com.xcodeassociated.cloud.gateway.rest;
 
-import com.xcodeassociated.cloud.gateway.model.Message;
+import com.xcodeassociated.cloud.gateway.dto.Message;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,19 +22,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.security.Principal;
-import java.util.concurrent.TimeoutException;
+import java.util.ArrayList;
 
 @Log4j2
 @RestController
 @Api(value = "Resource REST Endpoint", description = "...")
-public class RequestProceduralHandler {
+public class GatewayRestController {
 
 	@Qualifier("loadBalancedWebClientBuilder")
 	@Autowired
 	private WebClient.Builder client;
-
 
 	@Bean
 	@LoadBalanced
@@ -44,7 +43,7 @@ public class RequestProceduralHandler {
 	// public
 
 	@RequestMapping(value = "/pub-api/path/{message}", method = RequestMethod.GET)
-	public Mono<String> pathVar(@PathVariable String message) throws IOException {
+	public Mono<String> pathVar(@PathVariable String message) {
 		return Mono.just("{" + message + "}");
 	}
 
@@ -64,7 +63,7 @@ public class RequestProceduralHandler {
 						.accept(MediaType.APPLICATION_JSON)
 						.retrieve()
 						.bodyToMono(String.class))
-				.fallback(Mono.just("Fallback"))
+				.fallback(Mono.just("{}"))
 				.commandName("getMessage")
 				.toMono();
 	}
@@ -79,7 +78,7 @@ public class RequestProceduralHandler {
 						.accept(MediaType.APPLICATION_JSON)
 						.retrieve()
 						.bodyToFlux(String.class))
-				.fallback(Mono.just("Fallback"))
+				.fallback(Mono.just(new JSONArray(new ArrayList<String>()).toString()))
 				.commandName("getReservations")
 				.toFlux();
 	}

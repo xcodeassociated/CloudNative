@@ -1,18 +1,18 @@
-package com.xcodeassociated.cloud.user.dto;
+package com.xcodeassociated.cloud.gateway.security.dto;
 
-import com.xcodeassociated.cloud.user.model.UserRole;
+import com.xcodeassociated.cloud.gateway.security.model.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UserQueryResponseDto {
+@ToString
+public class UserQueryResponseServiceDto {
     private String username;
     private String password;
     private List<UserRole> roles;

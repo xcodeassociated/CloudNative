@@ -6,6 +6,7 @@ import com.xcodeassociated.cloud.user.model.User;
 import com.xcodeassociated.cloud.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -30,6 +31,6 @@ public class UserService {
     }
 
     private UserQueryResponseDto userQueryResponseDtoBuilder(User user) {
-        return new UserQueryResponseDto(user.getUsername(), user.getPassword(), user.getRole());
+        return new UserQueryResponseDto(user.getUsername(), user.getPassword(), Arrays.asList(user.getRole()));
     }
 }

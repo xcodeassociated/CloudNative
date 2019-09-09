@@ -26,8 +26,8 @@ public class BootstrapDataWriter implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         log.info("DataWriter Bean Context Started");
         List<User> users = Arrays.asList(
-            new User(null, "admin", "admin", UserRole.ROLE_ADMIN),
-            new User(null, "user", "user", UserRole.ROLE_USER));
+            new User(null, "admin", "dQNjUIMorJb8Ubj2+wVGYp6eAeYkdekqAcnYp+aRq5w=", UserRole.ROLE_ADMIN),
+            new User(null, "user", "cBrlgyL2GI2GINuLUUwgojITuIufFycpLG4490dhGtY=", UserRole.ROLE_USER));
 
         this.userRepository.deleteAll();
 

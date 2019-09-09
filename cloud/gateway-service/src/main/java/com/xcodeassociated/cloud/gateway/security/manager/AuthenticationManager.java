@@ -1,6 +1,7 @@
-package com.xcodeassociated.cloud.gateway.security;
+package com.xcodeassociated.cloud.gateway.security.manager;
 
-import com.xcodeassociated.cloud.gateway.security.model.Role;
+import com.xcodeassociated.cloud.gateway.security.utils.JWTUtil;
+import com.xcodeassociated.cloud.gateway.security.model.UserRole;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -24,7 +25,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 	@SuppressWarnings("unchecked")
 	public Mono<Authentication> authenticate(Authentication authentication) {
 		String authToken = authentication.getCredentials().toString();
-		
+
 		String username;
 		try {
 			username = jwtUtil.getUsernameFromToken(authToken);
@@ -34,9 +35,9 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 		if (username != null && jwtUtil.validateToken(authToken)) {
 			Claims claims = jwtUtil.getAllClaimsFromToken(authToken);
 			List<String> rolesMap = claims.get("role", List.class);
-			List<Role> roles = new ArrayList<>();
+			List<UserRole> roles = new ArrayList<>();
 			for (String rolemap : rolesMap) {
-				roles.add(Role.valueOf(rolemap));
+				roles.add(UserRole.valueOf(rolemap));
 			}
 			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
 				username,

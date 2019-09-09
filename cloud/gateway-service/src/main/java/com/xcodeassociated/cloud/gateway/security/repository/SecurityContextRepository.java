@@ -1,5 +1,6 @@
-package com.xcodeassociated.cloud.gateway.security;
+package com.xcodeassociated.cloud.gateway.security.repository;
 
+import com.xcodeassociated.cloud.gateway.security.manager.AuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class SecurityContextRepository implements ServerSecurityContextRepository {
-	
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -36,5 +37,5 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
 			return Mono.empty();
 		}
 	}
-	
+
 }

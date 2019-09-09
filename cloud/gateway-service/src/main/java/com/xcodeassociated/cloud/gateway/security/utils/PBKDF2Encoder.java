@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.gateway.security;
+package com.xcodeassociated.cloud.gateway.security.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,7 +12,7 @@ import java.util.Base64;
 
 @Component
 public class PBKDF2Encoder implements PasswordEncoder {
-	
+
 	@Value("${springbootwebfluxjjwt.password.encoder.secret}")
 	private String secret;
 
@@ -38,5 +38,5 @@ public class PBKDF2Encoder implements PasswordEncoder {
 	public boolean matches(CharSequence cs, String string) {
 		return encode(cs).equals(string);
 	}
-	
+
 }

@@ -1,5 +1,7 @@
-package com.xcodeassociated.cloud.gateway.security;
+package com.xcodeassociated.cloud.gateway.security.config;
 
+import com.xcodeassociated.cloud.gateway.security.repository.SecurityContextRepository;
+import com.xcodeassociated.cloud.gateway.security.manager.AuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;

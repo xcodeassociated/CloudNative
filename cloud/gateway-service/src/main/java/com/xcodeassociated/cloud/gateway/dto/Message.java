@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.gateway.security.model;
+package com.xcodeassociated.cloud.gateway.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AuthRequest {
-	private String username;
-	private String password;
+public class Message {
+
+	private String content;
+
 }
