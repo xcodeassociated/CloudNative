@@ -56,9 +56,11 @@ class AppContext extends Component<PropsAppRouter, IStateAppRouter> {
                 <NavLink className="nav-link" activeClassName="active" to="/about">About</NavLink>
               </Nav.Item>
               {this.isLoggedIn() ?
-                <Nav.Item as="li">
-                  <NavLink className="nav-link" activeClassName="active" to="/logout">Logout</NavLink>
-                </Nav.Item> : null
+                <div id="nav-logged-in-username">
+                  <Nav.Item as="li">
+                    <NavLink className="nav-link" activeClassName="active" to="/logout">Logout: {localStorage.getItem('username')}</NavLink>
+                  </Nav.Item>
+                </div> : null
               }
             </Nav>
           </div>
