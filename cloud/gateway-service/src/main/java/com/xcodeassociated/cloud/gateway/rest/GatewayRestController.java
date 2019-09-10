@@ -16,11 +16,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.hystrix.HystrixCommands;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -53,7 +55,7 @@ public class GatewayRestController {
 	@ApiOperation(value = "Returns JSON Array of Events")
     @RequestMapping(value = "/resource/events", method = RequestMethod.GET)
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public Flux<String> pubReservations(){
+	public Flux<String> getEvents(){
 		return HystrixCommands
 				.from(client.build().get()
 						.uri("http://event-service/router/events")
@@ -64,6 +66,35 @@ public class GatewayRestController {
 				.commandName("getEvents")
 				.toFlux();
 	}
+
+    @ApiOperation(value = "Returns created event")
+    @RequestMapping(value = "/resource/event/create", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public Mono<String> addEvent(@RequestBody String data){
+        return HystrixCommands
+            .from(client.build().post()
+                .uri("http://event-service/router/create")
+                .body(BodyInserters.fromObject(data))
+                .retrieve()
+                .bodyToMono(String.class))
+            .fallback(Mono.just(new JSONObject().toString()))
+            .commandName("addEvent")
+            .toMono();
+    }
+
+    @ApiOperation(value = "Deletes event")
+    @RequestMapping(value = "/resource/event/delete", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public Mono<?> deleteEvent(@RequestParam("id") String id){
+        return HystrixCommands
+            .from(client.build().delete()
+                .uri("http://event-service/router/delete/{id}", id)
+                .retrieve()
+                .bodyToMono(String.class))
+            .fallback(Mono.just(new JSONObject().toString()))
+            .commandName("deleteEvent")
+            .toMono();
+    }
 
 	// security and diagnostics api
 
