@@ -19,10 +19,23 @@ public class H2Config {
     @EventListener(org.springframework.context.event.ContextRefreshedEvent.class)
     public void start() throws java.sql.SQLException {
         log.debug("ConfigStore instance: " + configStore);
-
         log.debug("H2 console starting...");
-        this.webServer = org.h2.tools.Server.createWebServer("-webPort", "8082", "-tcpAllowOthers").start();
-        this.server = org.h2.tools.Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
+
+        this.webServer = org.h2.tools.Server.createWebServer(
+            "-webPort",
+            this.configStore.getH2WebPort(),
+            this.configStore.getH2WebFlag())
+            .start();
+
+        log.debug("Starting H2 Web server: " + this.configStore.getH2WebPort());
+
+        this.server = org.h2.tools.Server.createTcpServer(
+            "-tcpPort",
+            this.configStore.getH2TcpPort(),
+            this.configStore.getH2TcpFlag())
+            .start();
+
+        log.debug("Starting H2 Tcp server: " + this.configStore.getH2TcpPort());
     }
 
     @EventListener(org.springframework.context.event.ContextClosedEvent.class)
