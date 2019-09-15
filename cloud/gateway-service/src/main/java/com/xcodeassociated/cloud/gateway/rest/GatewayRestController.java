@@ -55,7 +55,7 @@ public class GatewayRestController {
 
 	@ApiOperation(value = "Home Page")
 	@RequestMapping(value = "/pub/home", method = RequestMethod.GET)
-	public Mono<?> home(){
+	public Mono<String> home(){
 		return Mono.just("todo: home");
 	}
 
@@ -71,7 +71,7 @@ public class GatewayRestController {
 	@ApiOperation(value = "Returns JSON Array of Events")
     @RequestMapping(value = "/resource/events", method = RequestMethod.GET)
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public Flux<?> getEvents(Authentication authentication) throws IOException {
+	public Flux<String> getEvents(Authentication authentication) throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
         final UserSubject userSubject = objectMapper.readValue(authentication.getName(), UserSubject.class);
 		return HystrixCommands
@@ -82,6 +82,7 @@ public class GatewayRestController {
                 .uri(uriBuilder -> uriBuilder
                     .path("/router/events/{id}")
                     .build(userSubject.getId()))
+                .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToFlux(String.class))
             .fallback(Flux.just(new JSONArray().toString()))
