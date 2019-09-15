@@ -1,9 +1,11 @@
 package com.xcodeassociated.cloud.gateway.config;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
+@Profile("dev")
 @Component
 public class SwaggerWebfluxConfig implements WebFluxConfigurer {
 
