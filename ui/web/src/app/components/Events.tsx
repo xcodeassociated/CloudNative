@@ -78,35 +78,35 @@ class Events extends Component<object, IState> {
 
   private createEvent(eventName: string): void {
     console.log("event create: " + eventName);
-    const token = localStorage.getItem('token');
-    if (this.hasToken()) {
-      const requestOptions = {
-        method: 'POST',
-        headers: [
-          ['Content-Type', 'application/json'],
-          ['Accept', 'application/json'],
-          ['Authorization', `Bearer ${token}`]
-        ],
-        body: JSON.stringify({
-          eventName: eventName
-        })
-      };
+    if (eventName.length > 0) {
+      const token = localStorage.getItem('token');
+      if (this.hasToken()) {
+        const requestOptions = {
+          method: 'POST',
+          headers: [
+            ['Content-Type', 'application/json'],
+            ['Accept', 'application/json'],
+            ['Authorization', `Bearer ${token}`]
+          ],
+          body: JSON.stringify({
+            eventName: eventName
+          })
+        };
 
-      let url: string = `${appConfig.backend_url}/api/v1/gateway/resource/event/create`;
-      fetch(url, requestOptions).then((response: Response) => {
-        if (response.ok) {
-          response.text().then(text => {
-            console.log(text);
-            let object: Event = JSON.parse(text);
-            if (this.state.events) {
-              this.setState({events: this.state.events.concat(object)});
-            }
-          });
-        }
-      });
-
-    };
-
+        let url: string = `${appConfig.backend_url}/api/v1/gateway/resource/event/create`;
+        fetch(url, requestOptions).then((response: Response) => {
+          if (response.ok) {
+            response.text().then(text => {
+              console.log(text);
+              let object: Event = JSON.parse(text);
+              if (this.state.events) {
+                this.setState({events: this.state.events.concat(object)});
+              }
+            });
+          }
+        });
+      }
+    }
     this.setState({eventCreateName: ""});
   }
 
