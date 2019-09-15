@@ -97,7 +97,6 @@ public class GatewayRestController {
         final ObjectMapper objectMapper = new ObjectMapper();
         final UserSubject userSubject = objectMapper.readValue(authentication.getName(), UserSubject.class);
         data.put("id", userSubject.getId().toString());
-        log.debug(">>> {}", data.toString());
         return HystrixCommands
             .from(client
                 .baseUrl("http://event-service")
