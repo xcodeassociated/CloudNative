@@ -25,9 +25,9 @@ public class BootstrapDataWriter implements ApplicationRunner {
         this.eventRepository
                 .deleteAll()
                 .thenMany(
-                        Flux.just("Event 1", "Event 2", "Event 3", "Event 4", "Event 5")
-                                .map(name -> new Event(null, name))
-                                .flatMap(this.eventRepository::save))
+                    Flux.just("Event 1", "Event 2", "Event 3", "Event 4", "Event 5")
+                        .map(name -> new Event(null, name))
+                        .flatMap(this.eventRepository::save))
                 .thenMany(this.eventRepository.findAll())
                 .subscribe(log::debug);
     }

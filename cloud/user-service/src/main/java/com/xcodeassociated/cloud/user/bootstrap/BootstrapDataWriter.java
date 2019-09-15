@@ -30,9 +30,7 @@ public class BootstrapDataWriter implements ApplicationRunner {
             new User(null, "user", "cBrlgyL2GI2GINuLUUwgojITuIufFycpLG4490dhGtY=", UserRole.ROLE_USER));
 
         this.userRepository.deleteAll();
-
         this.userRepository.saveAll(users);
-
         this.userRepository.findAll().forEach(log::debug);
     }
 }
