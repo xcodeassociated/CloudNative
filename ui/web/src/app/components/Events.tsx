@@ -38,6 +38,29 @@ class Events extends Component<object, IState> {
   }
 
   public componentDidMount(): void {
+    const onFetch = (response: Response): void => {
+        if (response.ok) {
+          response.text().then(text => {
+              let objects: Array<Event> = JSON.parse(text);
+              this.setState({
+                ...this.state,
+                events: objects
+              });
+            }
+          );
+      } else {
+        response.text().then(text => {
+          this.setState({
+            ...this.state,
+            error: {
+              code: response.status,
+              description: text
+            }
+          });
+        });
+      }
+    };
+
     const token = localStorage.getItem('token');
     if (this.hasToken()) {
       const requestOptions = {
@@ -49,49 +72,83 @@ class Events extends Component<object, IState> {
         ],
       };
 
-      const onFetch = (response: Response) => {
-        if (response.ok) {
-          response.text().then(text => {
-              let objects: Array<Event> = JSON.parse(text);
-              this.setState({
-                ...this.state,
-                events: objects
-              })
-            }
-          )
-        } else {
-          response.text().then(text => {
-            this.setState({
-              ...this.state,
-              error: {
-                code: response.status,
-                description: text
-              }
-            });
-          });
-        }
-      };
-
       fetch(`${appConfig.backend_url}/api/v1/gateway/resource/events`, requestOptions).then(onFetch)
     }
   }
 
-  private createEvent(eventName: string) {
+  private createEvent(eventName: string): void {
     console.log("event create: " + eventName);
+    const token = localStorage.getItem('token');
+    if (this.hasToken()) {
+      const requestOptions = {
+        method: 'POST',
+        headers: [
+          ['Content-Type', 'application/json'],
+          ['Accept', 'application/json'],
+          ['Authorization', `Bearer ${token}`]
+        ],
+        body: JSON.stringify({
+          eventName: eventName
+        })
+      };
 
+      let url: string = `${appConfig.backend_url}/api/v1/gateway/resource/event/create`;
+      fetch(url, requestOptions).then((response: Response) => {
+        if (response.ok) {
+          response.text().then(text => {
+            console.log(text);
+            let object: Event = JSON.parse(text);
+            if (this.state.events) {
+              this.setState({events: this.state.events.concat(object)});
+            }
+          });
+        }
+      });
+
+    };
+
+    this.setState({eventCreateName: ""});
   }
 
-  public onCreateSubmit(e: any) {
+  public onCreateSubmit(e: any): void {
     e.preventDefault();
     this.state.dispatch(this.createEvent(this.state.eventCreateName));
   }
 
-  private deleteEvent(eventId: string) {
+  private deleteEvent(eventId: string): void {
     console.log("event delete: " + eventId);
+    const token = localStorage.getItem('token');
+    if (this.hasToken()) {
+      const requestOptions = {
+        method: 'DELETE',
+        headers: [
+          ['Content-Type', 'application/json'],
+          ['Accept', 'application/json'],
+          ['Authorization', `Bearer ${token}`]
+        ],
+      };
 
+      let url: string = `${appConfig.backend_url}/api/v1/gateway/resource/event/delete?id=` + eventId;
+      fetch(url, requestOptions).then((response: Response) => {
+        if (response.ok) {
+          response.text().then(text => {
+            console.log(text);
+            if (this.state.events) {
+              this.setState({events: this.state.events.filter((event: Event) => {
+                  return event.eventId !== eventId;
+                })
+              });
+            }
+          });
+
+        }
+      });
+
+      this.setState({eventDeleteId: ""});
+    }
   }
 
-  public onDeleteSubmit(e: any) {
+  public onDeleteSubmit(e: any): void {
     e.preventDefault();
     let id = e.target.eventId.value;
     this.setState({eventDeleteId: id});
