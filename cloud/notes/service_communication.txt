@@ -1,9 +1,0 @@
-Gateway:
-	GET -> WebFlux Client -> Service -> WebFlux Router -> Data...
-	POST, PUT, DELETE -> WebFlux Client / RestTemplate -> Service -> RestController -> ResponseEntity
-	
-Events: 
-	GET -> Router -> Service -> EventDto -> Service -> Gateway
-	
-	note: EventDto {event data, refs: userId}
-	
