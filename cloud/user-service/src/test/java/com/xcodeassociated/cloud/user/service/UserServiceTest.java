@@ -1,6 +1,5 @@
 package com.xcodeassociated.cloud.user.service;
 
-import com.netflix.discovery.converters.Auto;
 import com.xcodeassociated.cloud.user.dto.UserQueryRequestDto;
 import com.xcodeassociated.cloud.user.dto.UserQueryResponseDto;
 import com.xcodeassociated.cloud.user.model.User;
@@ -9,20 +8,11 @@ import com.xcodeassociated.cloud.user.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockBeans;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
