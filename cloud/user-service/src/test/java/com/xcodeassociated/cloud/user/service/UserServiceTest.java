@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -81,6 +80,19 @@ public class UserServiceTest {
         assertEquals(dto.getPassword(), responseDto.get().getPassword());
         assertEquals(UserRole.ROLE_USER, responseDto.get().getRoles()
             .stream().findFirst().get());
+    }
+
+    @Test
+    public void getUserByUsernameAndPassword_UserRoleIncorrect_Test() {
+        // given
+        String username = "user", password = "incorrect_password";
+        UserQueryRequestDto dto = new UserQueryRequestDto(username, password);
+
+        // when
+        Optional<UserQueryResponseDto> responseDto = this.userService.getUserByData(dto);
+
+        // then
+        assertFalse(responseDto.isPresent());
     }
 
 }
