@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.event;
+package com.xcodeassociated.cloud.user;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class UserServiceApplicationTest {
 
 	@Test
-	public void contextLoads() {
-	}
+	public void contextLoads() {}
 
 }
