@@ -31,12 +31,11 @@ public class EventServiceTest {
     @InjectMocks
     private EventService eventService;
 
-    private Flux<Event> testEvents;
     private Flux<EventQueryDto> testEventDtos;
 
     @Before
     public void setUp() {
-        this.testEvents = Flux.just(
+        Flux<Event> testEvents = Flux.just(
             new Event("1", "Event 1"),
             new Event("2", "Event 2")
         );
@@ -46,19 +45,15 @@ public class EventServiceTest {
             new EventQueryDto("2", "Event 2")
         );
 
-        Mockito.when(this.eventRepository.findAll())
-            .thenReturn(this.testEvents)
-            .thenReturn(this.testEvents.take(1));
+        Mockito.lenient().when(this.eventRepository.findAll())
+            .thenReturn(testEvents)
+            .thenReturn(testEvents.take(1));
 
-        Mockito.when(this.eventRepository.deleteById(anyString()))
+        Mockito.lenient().when(this.eventRepository.deleteById(anyString()))
             .thenReturn(Mono.empty());
 
-        Mockito.when(this.eventRepository.save(any(Event.class)))
+        Mockito.lenient().when(this.eventRepository.save(any(Event.class)))
             .thenReturn(Mono.just(new Event("3", "Event 3")));
-    }
-
-    private void foo() {
-        Mockito.when(this.eventRepository.findAll()).thenReturn(this.testEvents.take(1));
     }
 
     @Test
@@ -83,12 +78,16 @@ public class EventServiceTest {
 
     @Test
     public void removeEvent_Test() {
+        // given
+        Mono<EventCommandDto> dto = Mono.just(new EventCommandDto("1", "Event 1", "1"));
         assertEquals(2, Objects.requireNonNull
             (this.eventService.getAllEvents().count().block()).intValue()
         );
 
-        this.eventService.removeEvent(Mono.just(new EventCommandDto("1", "Event 1", "1")));
+        // when
+        Mono<Void> result = this.eventService.removeEvent(dto);
 
+        // then
         assertEquals(1, Objects.requireNonNull
             (this.eventService.getAllEvents().count().block()).intValue()
         );
@@ -96,10 +95,15 @@ public class EventServiceTest {
 
     @Test
     public void createEvent_Test() {
+        // given
         EventCommandDto commandDto = new EventCommandDto("3", "Event 3", "1");
         EventQueryDto queryDto = new EventQueryDto("3", "Event 3");
 
-        assertEquals(queryDto, this.eventService.createEvent(Mono.just(commandDto)).block());
+        // when
+        Mono<EventQueryDto> result = this.eventService.createEvent(Mono.just(commandDto));
+
+        // then
+        assertEquals(queryDto, result.block());
     }
 
 }
