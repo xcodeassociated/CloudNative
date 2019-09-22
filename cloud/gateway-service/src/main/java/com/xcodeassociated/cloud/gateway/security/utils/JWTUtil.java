@@ -51,19 +51,16 @@ public class JWTUtil implements Serializable {
 		return expiration.before(Date.from(Instant.now()));
 	}
 
-	public String generateToken(UserQueryResponseServiceDto userQueryResponseServiceDto, UserSubject userSubject)
-        throws JsonProcessingException {
-
+	public String generateToken(UserQueryResponseServiceDto userQueryResponseServiceDto, UserSubject userSubject) throws JsonProcessingException {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("role", userQueryResponseServiceDto.getRoles());
 		return doGenerateToken(claims, userSubject);
 	}
 
 	private String doGenerateToken(Map<String, Object> claims, UserSubject userSubject) throws JsonProcessingException {
-		Long expirationTimeLong = Long.parseLong(this.expirationTime);
-        ObjectMapper objectMapper = new ObjectMapper();
-		final Date createdDate = Date.from(Instant.now()); // new Date();
-        //todo: control expiration date
+		final Long expirationTimeLong = Long.parseLong(this.expirationTime);
+        final ObjectMapper objectMapper = new ObjectMapper();
+		final Date createdDate = Date.from(Instant.now());
 		final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 1000);
 		return Jwts.builder()
 				.setClaims(claims)
