@@ -13,16 +13,19 @@ import java.util.Base64;
 @Component
 public class PBKDF2Encoder implements PasswordEncoder {
 
-	@Value("${springbootwebfluxjjwt.password.encoder.secret}")
 	private String secret;
-
-	@Value("${springbootwebfluxjjwt.password.encoder.iteration}")
 	private Integer iteration;
-
-	@Value("${springbootwebfluxjjwt.password.encoder.keylength}")
 	private Integer keylength;
 
-	@Override
+    public PBKDF2Encoder(@Value("${springbootwebfluxjjwt.password.encoder.secret}") String secret,
+                         @Value("${springbootwebfluxjjwt.password.encoder.iteration}") Integer iteration,
+                         @Value("${springbootwebfluxjjwt.password.encoder.keylength}") Integer keylength) {
+        this.secret = secret;
+        this.iteration = iteration;
+        this.keylength = keylength;
+    }
+
+    @Override
 	public String encode(CharSequence cs) {
 		try {
 			byte[] result = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")

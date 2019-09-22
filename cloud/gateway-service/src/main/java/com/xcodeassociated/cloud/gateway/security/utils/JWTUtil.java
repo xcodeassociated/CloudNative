@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,15 +21,21 @@ import java.util.Map;
 public class JWTUtil implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	@Value("${springbootwebfluxjjwt.jjwt.secret}")
 	private String secret;
-
-	@Value("${springbootwebfluxjjwt.jjwt.expiration}")
 	private String expirationTime;
 
-	public Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(Base64.getEncoder().encodeToString(secret.getBytes())).parseClaimsJws(token).getBody();
+    public JWTUtil(@Value("${springbootwebfluxjjwt.jjwt.secret}") String secret,
+                   @Value("${springbootwebfluxjjwt.jjwt.expiration}") String expirationTime) {
+        this.secret = secret;
+        this.expirationTime = expirationTime;
+    }
+
+    public Claims getAllClaimsFromToken(String token) {
+		return Jwts.parser()
+            .setSigningKey(Base64.getEncoder()
+                .encodeToString(this.secret.getBytes()))
+            .parseClaimsJws(token)
+            .getBody();
 	}
 
 	public String getUsernameFromToken(String token) {
@@ -41,19 +48,21 @@ public class JWTUtil implements Serializable {
 
 	private Boolean isTokenExpired(String token) {
 		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
+		return expiration.before(Date.from(Instant.now()));
 	}
 
-	public String generateToken(UserQueryResponseServiceDto userQueryResponseServiceDto, UserSubject userSubject) throws JsonProcessingException {
+	public String generateToken(UserQueryResponseServiceDto userQueryResponseServiceDto, UserSubject userSubject)
+        throws JsonProcessingException {
+
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("role", userQueryResponseServiceDto.getRoles());
 		return doGenerateToken(claims, userSubject);
 	}
 
 	private String doGenerateToken(Map<String, Object> claims, UserSubject userSubject) throws JsonProcessingException {
-		Long expirationTimeLong = Long.parseLong(expirationTime); //in second
+		Long expirationTimeLong = Long.parseLong(this.expirationTime);
         ObjectMapper objectMapper = new ObjectMapper();
-		final Date createdDate = new Date();
+		final Date createdDate = Date.from(Instant.now()); // new Date();
         //todo: control expiration date
 		final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 1000);
 		return Jwts.builder()
@@ -61,7 +70,7 @@ public class JWTUtil implements Serializable {
 				.setSubject(objectMapper.writeValueAsString(userSubject))
 				.setIssuedAt(createdDate)
 				.setExpiration(expirationDate)
-				.signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(secret.getBytes()))
+				.signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(this.secret.getBytes()))
 				.compact();
 	}
 

@@ -64,7 +64,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.2'
+    testCompile group: 'org.powermock', name: 'powermock-core', version: '2.0.2'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.2'
 }
 
 dependencyManagement {
