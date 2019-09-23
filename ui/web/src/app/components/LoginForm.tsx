@@ -32,7 +32,7 @@ class LoginForm extends Component<IProps, IState> {
 
   public render() {
     let {email, password} = this.state;
-    let {isLoginPending, isLoginSuccess, loginError} = this.props;
+    let {isLoginPending, loginError} = this.props;
 
     if (this.isLoggedIn()) {
       return (<Redirect to='/'/>);
