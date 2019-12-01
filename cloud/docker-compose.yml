@@ -1,0 +1,33 @@
+version: '3'
+services:
+    configuration-service:
+        image: configuration-service
+        build:
+            context: ./configuration-service
+            dockerfile: Dockerfile
+        networks:
+            - int-net
+        expose:
+            - "8888"
+        ports:
+            - "8888:8888"
+
+    eureka-service:
+        image: eureka-service
+        depends_on:
+            - configuration-service
+        links:
+          - "configuration-service:configuration-service"
+        networks:
+          - int-net
+        build:
+            context: ./eureka-service
+            dockerfile: Dockerfile
+        expose:
+            - "8761"
+            - "8888"
+        ports:
+          - "8761:8761"
+networks:
+    int-net:
+        driver: bridge
