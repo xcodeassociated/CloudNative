@@ -3,4 +3,5 @@ ENV APP_HOME=/usr/local/app/
 WORKDIR $APP_HOME
 COPY ./build/libs/eureka-service-*.jar ./app.jar
 EXPOSE 8761
-CMD ["java","-jar","app.jar"]
+EXPOSE 8888
+CMD ["java","-jar","-Dspring.profiles.active=docker","-Dspring.cloud.config.uri=http://configuration-service:8888","app.jar"]
