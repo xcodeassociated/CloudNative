@@ -1,0 +1,27 @@
+zuul:
+  prefix: /api
+  routes:
+    gateway:
+      sensitiveHeaders:
+      path: /v1/gateway/**
+      serviceId: GATEWAY-SERVICE
+    event:
+      path: /v1/event/**
+      serviceId: EVENT-SERVICE
+    user:
+      path: /v1/user/**
+      serviceId: USER-SERVICE
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+
+server:
+  port: 8090
+
+spring:
+  application:
+    name: zuul-service
