@@ -1,0 +1,8 @@
+spring:
+    application:
+        name: event-service
+    cloud:
+        config:
+            label: master
+            profile: docker
+            uri: http://host.docker.internal:8888
