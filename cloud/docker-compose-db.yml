@@ -1,0 +1,105 @@
+version: '2.4'
+services:
+    configuration-service:
+        image: configuration-service
+        build:
+            context: ./configuration-service
+            dockerfile: Dockerfile
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8888/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        networks:
+            - int-dev-net
+        expose:
+            - "8888"
+        ports:
+            - "8888:8888"
+
+    eureka-service:
+        image: eureka-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+        links:
+            - "configuration-service:configuration-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./eureka-service
+            dockerfile: Dockerfile
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8761/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        expose:
+            - "8761"
+            - "8888"
+        ports:
+            - "8761:8761"
+
+    zuul-service:
+        image: zuul-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+            eureka-service:
+                condition: service_healthy
+        links:
+            - "configuration-service:configuration-service"
+            - "eureka-service:eureka-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./zuul-service
+            dockerfile: Dockerfile
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8090/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        expose:
+            - "8761"
+            - "8888"
+            - "8090"
+        ports:
+            - "8090:8090"
+
+    user-db:
+        image: postgres:latest
+        container_name: "user-db-postgres"
+        environment:
+            - POSTGRES_USER=userservice
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=postgres
+        networks:
+            - int-dev-net
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres-data:/var/lib/postgresql/user-service-db
+        restart: on-failure
+
+    event-db:
+        image: mongo:latest
+        container_name: "event-db-mongodb"
+        volumes:
+            - mongo:/var/lib/mongodb/data/event-service
+        networks:
+            - int-dev-net
+        ports:
+            - "27017:27017"
+        restart: on-failure
+
+networks:
+    int-dev-net:
+        driver: bridge
+
+volumes:
+    postgres-data:
+    mongo:
