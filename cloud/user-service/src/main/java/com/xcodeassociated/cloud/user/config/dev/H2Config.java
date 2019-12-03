@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.user.config;
+package com.xcodeassociated.cloud.user.config.dev;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

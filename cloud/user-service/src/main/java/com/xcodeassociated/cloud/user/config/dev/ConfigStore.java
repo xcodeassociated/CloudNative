@@ -1,8 +1,10 @@
-package com.xcodeassociated.cloud.user.config;
+package com.xcodeassociated.cloud.user.config.dev;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 
+@Profile("dev")
 @Getter
 public class ConfigStore {
     private static ConfigStore INSTANCE = null;
