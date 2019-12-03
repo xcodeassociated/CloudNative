@@ -5,15 +5,12 @@ zuul:
       sensitiveHeaders:
       path: /v1/gateway/**
       serviceId: GATEWAY-SERVICE
-      url: http://host.docker.internal:9999
     event:
       path: /v1/event/**
       serviceId: EVENT-SERVICE
-      url: http://host.docker.internal:8000
     user:
       path: /v1/user/**
       serviceId: USER-SERVICE
-      url: http://host.docker.internal:8100
 
 eureka:
   client:

@@ -5,4 +5,4 @@ COPY ./build/libs/zuul-service-*.jar ./app.jar
 EXPOSE 8888
 EXPOSE 8761
 EXPOSE 8090
-CMD ["java","-jar","-Dspring.profiles.active=docker","app.jar"]
+CMD ["java","-jar","-Dspring.profiles.active=docker-all","app.jar"]
