@@ -1,0 +1,209 @@
+version: '2.4'
+services:
+    configuration-service:
+        image: configuration-service
+        build:
+            context: ./configuration-service
+            dockerfile: Dockerfile
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8888/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        networks:
+            - int-dev-net
+        expose:
+            - "8888"
+        ports:
+            - "8888:8888"
+
+    eureka-service:
+        image: eureka-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+        links:
+          - "configuration-service:configuration-service"
+        networks:
+          - int-dev-net
+        build:
+            context: ./eureka-service
+            dockerfile: Dockerfile
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8761/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        expose:
+            - "8761"
+            - "8888"
+        ports:
+          - "8761:8761"
+
+    zuul-service:
+        image: zuul-all-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+            eureka-service:
+                condition: service_healthy
+        links:
+            - "configuration-service:configuration-service"
+            - "eureka-service:eureka-service"
+            - "gateway-service:gateway-service"
+            - "user-service:user-service"
+            - "event-service:event-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./zuul-service
+            dockerfile: Dockerfile-all
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8090/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        expose:
+            - "8761"
+            - "8888"
+            - "8090"
+        ports:
+            - "8090:8090"
+
+    user-db:
+        image: postgres:latest
+        container_name: "user-db-postgres"
+        environment:
+            - POSTGRES_USER=userservice
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=postgres
+        networks:
+            - int-dev-net
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres-data-all:/var/lib/postgresql/user-service-db-all
+        restart: on-failure
+
+    event-db:
+        image: mongo:latest
+        container_name: "event-db-mongodb"
+        volumes:
+            - mongo:/var/lib/mongodb/data/event-service
+        networks:
+            - int-dev-net
+        ports:
+            - "27017:27017"
+        restart: on-failure
+
+    user-service:
+        image: user-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+            eureka-service:
+                condition: service_healthy
+            user-db:
+                condition: service_started
+        links:
+            - "configuration-service:configuration-service"
+            - "user-db:user-db"
+            - "eureka-service:eureka-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./user-service
+            dockerfile: Dockerfile
+        expose:
+            - "8761"
+            - "8888"
+            - "5432"
+            - "8100"
+        ports:
+            - "8100:8100"
+
+    event-service:
+        image: event-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+            eureka-service:
+                condition: service_healthy
+            event-db:
+              condition: service_started
+        links:
+            - "configuration-service:configuration-service"
+            - "event-db:event-db"
+            - "eureka-service:eureka-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./event-service
+            dockerfile: Dockerfile
+        expose:
+            - "8761"
+            - "8888"
+            - "27017"
+            - "8000"
+        ports:
+            - "8000:8000"
+
+    gateway-service:
+        image: gateway-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+            eureka-service:
+                condition: service_healthy
+            user-service:
+                condition: service_started
+            event-service:
+                condition: service_started
+        links:
+            - "configuration-service:configuration-service"
+            - "event-db:event-db"
+            - "eureka-service:eureka-service"
+            - "user-service:user-service"
+            - "event-service:event-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./gateway-service
+            dockerfile: Dockerfile
+        expose:
+            - "8761"
+            - "8888"
+            - "8100"
+            - "8000"
+            - "9999"
+        ports:
+            - "9999:9999"
+
+    web-service:
+        image: web
+        depends_on:
+            gateway-service:
+                condition: service_started
+        links:
+            - "zuul-service:zuul-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./../ui/web
+            dockerfile: Dockerfile
+        expose:
+            - "3000"
+            - "8090"
+        ports:
+            - "3000:3000"
+
+networks:
+    int-dev-net:
+        driver: bridge
+
+volumes:
+    postgres-data-all:
+    mongo:

@@ -1,3 +1,3 @@
 export const appConfig = {
-  backend_url: 'http://127.0.0.1:8090'
+  backend_url: 'http://zuul-service:8090'
 };
