@@ -70,30 +70,19 @@ services:
         ports:
             - "8090:8090"
 
-    user-db:
+    postgres:
         image: postgres:latest
-        container_name: "user-db-postgres"
+        container_name: "postgres"
         environment:
-            - POSTGRES_USER=userservice
+            - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=password
-            - POSTGRES_DB=postgres
         networks:
             - int-dev-net
         ports:
             - "5432:5432"
         volumes:
-            - postgres-data:/var/lib/postgresql/user-service-db
-        restart: on-failure
-
-    event-db:
-        image: mongo:latest
-        container_name: "event-db-mongodb"
-        volumes:
-            - mongo:/var/lib/mongodb/data/event-service
-        networks:
-            - int-dev-net
-        ports:
-            - "27017:27017"
+            - postgres-data:/var/lib/postgresql/db
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         restart: on-failure
 
 networks:

@@ -5,7 +5,6 @@
 /**/node_modules/
 
 # ignore services database docker volumes
-cloud/mongo
 cloud/postgres-data
 
 ### STS ###
