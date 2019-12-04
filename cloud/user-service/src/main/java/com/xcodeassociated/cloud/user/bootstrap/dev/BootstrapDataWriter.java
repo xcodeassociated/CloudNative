@@ -1,4 +1,4 @@
-package com.xcodeassociated.cloud.user.bootstrap;
+package com.xcodeassociated.cloud.user.bootstrap.dev;
 
 import com.xcodeassociated.cloud.user.model.User;
 import com.xcodeassociated.cloud.user.model.UserRole;

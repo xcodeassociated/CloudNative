@@ -7,12 +7,10 @@ import org.springframework.context.annotation.Scope;
 
 @Profile("dev")
 @Configuration
-public class ConfigStoreConfiguration {
-
+public class H2Configuration {
     @Bean
     @Scope(value = "singleton")
-    ConfigStore getConfigStore() {
-        return ConfigStore.getInstance();
+    H2Env getConfigStore() {
+        return H2Env.getInstance();
     }
-
 }

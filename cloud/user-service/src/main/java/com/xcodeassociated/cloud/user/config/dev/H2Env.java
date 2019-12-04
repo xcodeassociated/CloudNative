@@ -6,8 +6,9 @@ import org.springframework.context.annotation.Profile;
 
 @Profile("dev")
 @Getter
-public class ConfigStore {
-    private static ConfigStore INSTANCE = null;
+public class H2Env {
+    private static H2Env INSTANCE = null;
+
     @Value("${com.xcodeassociated.config.user.h2.web.port}")
     private String h2WebPort;
     @Value("${com.xcodeassociated.config.user.h2.web.flag}")
@@ -17,11 +18,11 @@ public class ConfigStore {
     @Value("${com.xcodeassociated.config.user.h2.tcp.flag}")
     private String h2TcpFlag;
 
-    private ConfigStore() {}
+    private H2Env() {}
 
-    static ConfigStore getInstance() {
+    static H2Env getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ConfigStore();
+            INSTANCE = new H2Env();
         }
         return INSTANCE;
     }

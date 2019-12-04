@@ -1,5 +1,6 @@
 package com.xcodeassociated.cloud.user.config.dev;
 
+import com.xcodeassociated.cloud.user.config.ConfigStore;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -9,12 +10,12 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @Component
 @Profile("dev")
-public class H2Config {
+public class H2Init {
     private org.h2.tools.Server webServer;
     private org.h2.tools.Server server;
 
     @Autowired
-    ConfigStore configStore;
+    H2Env configStore;
 
     @EventListener(org.springframework.context.event.ContextRefreshedEvent.class)
     public void start() throws java.sql.SQLException {
