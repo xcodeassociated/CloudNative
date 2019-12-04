@@ -115,7 +115,7 @@ class Events extends Component<object, IState> {
     this.state.dispatch(this.createEvent(this.state.eventCreateName));
   }
 
-  private deleteEvent(eventId: string): void {
+  private deleteEvent(eventId: Number): void {
     console.log("event delete: " + eventId);
     const token = localStorage.getItem('token');
     if (this.hasToken()) {
@@ -132,10 +132,9 @@ class Events extends Component<object, IState> {
       fetch(url, requestOptions).then((response: Response) => {
         if (response.ok) {
           response.text().then(text => {
-            console.log(text);
             if (this.state.events) {
               this.setState({events: this.state.events.filter((event: Event) => {
-                  return event.eventId !== eventId;
+                  return event.eventId !== Number.parseInt(text);
                 })
               });
             }
@@ -143,7 +142,6 @@ class Events extends Component<object, IState> {
 
         }
       });
-
       this.setState({eventDeleteId: ""});
     }
   }
@@ -199,7 +197,7 @@ class Events extends Component<object, IState> {
                       <td>{reservation.eventName}</td>
                       <td>
                         <form name="form" onSubmit={this.onDeleteSubmit}>
-                          <input type="hidden" name="eventId" value={reservation.eventId}/>
+                          <input type="hidden" name="eventId" value={String(reservation.eventId)}/>
                           <button className="btn btn-primary">Delete Event</button>
                         </form>
                       </td>
