@@ -95,7 +95,7 @@ services:
                 condition: service_healthy
             eureka-service:
                 condition: service_healthy
-            user-db:
+            postgres:
                 condition: service_started
         links:
             - "configuration-service:configuration-service"
@@ -121,7 +121,7 @@ services:
                 condition: service_healthy
             eureka-service:
                 condition: service_healthy
-            event-db:
+            postgres:
               condition: service_started
         links:
             - "configuration-service:configuration-service"
@@ -193,5 +193,4 @@ networks:
         driver: bridge
 
 volumes:
-    postgres-data-all:
-    mongo:
+    postgres-data:

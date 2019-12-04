@@ -91,4 +91,3 @@ networks:
 
 volumes:
     postgres-data:
-    mongo:
