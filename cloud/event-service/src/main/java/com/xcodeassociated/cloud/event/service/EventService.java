@@ -20,32 +20,18 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    private EventQueryDto getDto(Event event) {
-        // todo: linking - event with user
-        return new EventQueryDto(event.getId(), event.getEventName());
-    }
-
-    private Event getEvent(EventCommandDto command) {
-        return new Event(command.getEventId(), command.getEventName());
-    }
-
     public Flux<EventQueryDto> getAllEvents() {
-        return this.eventRepository
-            .findAll()
+        return Flux.fromIterable(this.eventRepository.findAll())
             .map(this::getDto);
     }
 
-    public Mono<Void> removeEvent(Mono<EventCommandDto> dto) {
-        return dto.map(this::getEvent)
-            .flatMap(e ->
-                this.eventRepository.deleteById(e.getId()));
-    }
-
-    private Mono<EventQueryDto> create(Mono<Event> dto) {
-        return dto.flatMap(event ->
-            this.eventRepository
-                .save(event)
-                .map(this::getDto));
+    public Mono<Long> removeEvent(Mono<EventCommandDto> dto) {
+        return dto
+            .map(this::getEvent)
+            .map(e -> {
+                this.eventRepository.deleteById(e.getId());
+                return e.getId();
+            });
     }
 
     public Mono<EventQueryDto> createEvent(Mono<EventCommandDto> dto) {
@@ -53,5 +39,19 @@ public class EventService {
             .map(this::getEvent)
             .map(e -> new Event(null, e.getEventName()));
         return this.create(event);
+    }
+
+    private EventQueryDto getDto(Event event) {
+        return new EventQueryDto(event.getId(), event.getEventName());
+    }
+
+    private Event getEvent(EventCommandDto command) {
+        return new Event(command.getEventId(), command.getEventName());
+    }
+
+    private Mono<EventQueryDto> create(Mono<Event> dto) {
+        return dto.flatMap(event ->
+            Mono.just(this.eventRepository.save(event))
+                .map(this::getDto));
     }
 }

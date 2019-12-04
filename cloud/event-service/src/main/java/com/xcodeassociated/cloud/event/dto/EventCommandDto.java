@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @Data
 public class EventCommandDto {
-    private String eventId;
+    private Long eventId;
     private String eventName;
-    private String id;
+    private Long id;
 
     @JsonCreator
-    public EventCommandDto(@JsonProperty("eventId") String eventId,
+    public EventCommandDto(@JsonProperty("eventId") Long eventId,
                            @JsonProperty("eventName") String eventName,
-                           @JsonProperty("id") String id) {
+                           @JsonProperty("id") Long id) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.id = id;

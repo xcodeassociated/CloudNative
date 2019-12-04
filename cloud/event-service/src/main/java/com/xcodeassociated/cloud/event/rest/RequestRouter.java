@@ -53,9 +53,9 @@ public class RequestRouter {
                 request ->
                     ok()
                         .body(Mono.just(
-                            new EventCommandDto(request.pathVariable("id"),
-                                null, request.pathVariable("by"))
-                        ).flatMap(e -> this.eventService.removeEvent(Mono.just(e))), Void.class)
+                            new EventCommandDto(Long.valueOf(request.pathVariable("id")),
+                                null, Long.valueOf(request.pathVariable("by")))
+                        ).flatMap(e -> this.eventService.removeEvent(Mono.just(e))), Long.class)
                 )
             // diagnostic api
             .andRoute(GET("/router/message"),

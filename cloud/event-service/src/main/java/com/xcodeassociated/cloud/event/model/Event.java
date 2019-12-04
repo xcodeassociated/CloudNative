@@ -3,13 +3,19 @@ package com.xcodeassociated.cloud.event.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
+import javax.persistence.*;
+
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Event {
-    private String id;
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "name")
     private String eventName;
 }

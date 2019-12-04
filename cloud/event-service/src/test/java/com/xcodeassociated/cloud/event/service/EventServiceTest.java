@@ -12,9 +12,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -22,38 +28,31 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@DataJpaTest
 public class EventServiceTest {
 
-    @Mock
+    @Autowired
     private EventRepository eventRepository;
 
-    @InjectMocks
-    private EventService eventService;
+    private EventService eventService = null;
 
-    private Flux<EventQueryDto> testEventDtos;
+    private List<EventQueryDto> testEventDtos;
 
     @Before
     public void setUp() {
-        Flux<Event> testEvents = Flux.just(
-            new Event("1", "Event 1"),
-            new Event("2", "Event 2")
+        this.eventService = new EventService(this.eventRepository);
+
+        List<Event> testEvents = Arrays.asList(
+            new Event(1L, "Event 1"),
+            new Event(2L, "Event 2")
         );
 
-        this.testEventDtos = Flux.just(
-            new EventQueryDto("1", "Event 1"),
-            new EventQueryDto("2", "Event 2")
-        );
+        this.testEventDtos = testEvents.stream()
+            .map(e -> new EventQueryDto(e.getId(), e.getEventName()))
+            .collect(Collectors.toList());
 
-        Mockito.lenient().when(this.eventRepository.findAll())
-            .thenReturn(testEvents)
-            .thenReturn(testEvents.take(1));
-
-        Mockito.lenient().when(this.eventRepository.deleteById(anyString()))
-            .thenReturn(Mono.empty());
-
-        Mockito.lenient().when(this.eventRepository.save(any(Event.class)))
-            .thenReturn(Mono.just(new Event("3", "Event 3")));
+        this.eventRepository.saveAll(testEvents);
     }
 
     @Test
@@ -71,7 +70,7 @@ public class EventServiceTest {
 
     @Test
     public void findAllEvents_Dto_Test() {
-        assertEquals(this.testEventDtos.toStream().collect(Collectors.toList()),
+        assertEquals(this.testEventDtos,
             Objects.requireNonNull(this.eventService.getAllEvents().toStream().collect(Collectors.toList()))
         );
     }
@@ -79,13 +78,20 @@ public class EventServiceTest {
     @Test
     public void removeEvent_Test() {
         // given
-        Mono<EventCommandDto> dto = Mono.just(new EventCommandDto("1", "Event 1", "1"));
+        EventQueryDto eventQuery = this.eventService.getAllEvents()
+            .take(1)
+            .blockFirst();
+
+        assert eventQuery != null;
+        EventCommandDto dto = new EventCommandDto(eventQuery.getEventId(), eventQuery.getEventName(), 1L);
+
         assertEquals(2, Objects.requireNonNull
             (this.eventService.getAllEvents().count().block()).intValue()
         );
 
         // when
-        Mono<Void> result = this.eventService.removeEvent(dto);
+        Mono<Long> result = this.eventService.removeEvent(Mono.just(dto));
+        result.block();
 
         // then
         assertEquals(1, Objects.requireNonNull
@@ -96,14 +102,20 @@ public class EventServiceTest {
     @Test
     public void createEvent_Test() {
         // given
-        EventCommandDto commandDto = new EventCommandDto("3", "Event 3", "1");
-        EventQueryDto queryDto = new EventQueryDto("3", "Event 3");
+        EventCommandDto commandDto = new EventCommandDto(3L, "Event 3", 1L);
+        EventQueryDto queryDto = new EventQueryDto(3L, "Event 3");
+        assertEquals(2, Objects.requireNonNull
+            (this.eventService.getAllEvents().count().block()).intValue()
+        );
 
         // when
         Mono<EventQueryDto> result = this.eventService.createEvent(Mono.just(commandDto));
 
         // then
         assertEquals(queryDto, result.block());
+        assertEquals(3, Objects.requireNonNull
+            (this.eventService.getAllEvents().count().block()).intValue()
+        );
     }
 
 }

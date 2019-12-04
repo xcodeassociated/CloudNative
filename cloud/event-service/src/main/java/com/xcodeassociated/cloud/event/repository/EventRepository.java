@@ -1,6 +1,8 @@
 package com.xcodeassociated.cloud.event.repository;
 
 import com.xcodeassociated.cloud.event.model.Event;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface EventRepository extends ReactiveMongoRepository<Event, String> {}
+public interface EventRepository extends JpaRepository<Event, Long> {
+
+}

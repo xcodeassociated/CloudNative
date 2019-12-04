@@ -43,14 +43,14 @@ public class RequestRouterTest {
     @Before
     public void setUp() {
         Flux<EventQueryDto> testEventDtos = Flux.just(
-            new EventQueryDto("1", "Event 1")
+            new EventQueryDto(1L, "Event 1")
         );
 
         Mockito.lenient().when(this.eventService.getAllEvents())
             .thenReturn(testEventDtos);
 
         Mockito.lenient().when(this.eventService.createEvent(any()))
-            .thenReturn(Mono.just(new EventQueryDto("2", "Event 2")));
+            .thenReturn(Mono.just(new EventQueryDto(2L, "Event 2")));
 
         Mockito.lenient().when(this.eventService.removeEvent(any()))
             .thenReturn(Mono.empty());
@@ -84,7 +84,7 @@ public class RequestRouterTest {
         client.post()
             .uri("/router/create")
             .body(BodyInserters
-                .fromObject(new EventCommandDto("2", "Event 2", "1")))
+                .fromObject(new EventCommandDto(2L, "Event 2", 1L)))
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
