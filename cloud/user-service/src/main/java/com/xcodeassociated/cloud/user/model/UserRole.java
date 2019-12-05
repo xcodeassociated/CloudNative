@@ -1,6 +1,7 @@
 package com.xcodeassociated.cloud.user.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -13,7 +14,7 @@ public enum UserRole {
 
     private String role;
 
-    private UserRole(String role) {
+    UserRole(String role) {
         this.role = role;
     }
 

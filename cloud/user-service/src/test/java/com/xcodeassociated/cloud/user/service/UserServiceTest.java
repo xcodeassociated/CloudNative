@@ -5,11 +5,17 @@ import com.xcodeassociated.cloud.user.dto.UserQueryResponseDto;
 import com.xcodeassociated.cloud.user.model.User;
 import com.xcodeassociated.cloud.user.model.UserRole;
 import com.xcodeassociated.cloud.user.repository.UserRepository;
+import liquibase.integration.spring.SpringLiquibase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -18,8 +24,9 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
+@ActiveProfiles("test")
 @DataJpaTest
+@RunWith(SpringRunner.class)
 public class UserServiceTest {
 
     @Autowired

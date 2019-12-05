@@ -12,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
@@ -21,6 +23,8 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 
+@ActiveProfiles("test")
+@SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
 @WebFluxTest(UserRestController.class)
 public class UserRestControllerTest {

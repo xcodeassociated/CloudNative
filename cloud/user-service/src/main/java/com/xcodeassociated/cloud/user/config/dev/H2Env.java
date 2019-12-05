@@ -4,18 +4,18 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 
-@Profile("dev")
+@Profile({"dev", "local-dev"})
 @Getter
 public class H2Env {
     private static H2Env INSTANCE = null;
 
-    @Value("${com.xcodeassociated.config.user.h2.web.port}")
+    @Value("${com.xcodeassociated.config.h2.web.port}")
     private String h2WebPort;
-    @Value("${com.xcodeassociated.config.user.h2.web.flag}")
+    @Value("${com.xcodeassociated.config.h2.web.flag}")
     private String h2WebFlag;
-    @Value("${com.xcodeassociated.config.user.h2.tcp.port}")
+    @Value("${com.xcodeassociated.config.h2.tcp.port}")
     private String h2TcpPort;
-    @Value("${com.xcodeassociated.config.user.h2.tcp.flag}")
+    @Value("${com.xcodeassociated.config.h2.tcp.flag}")
     private String h2TcpFlag;
 
     private H2Env() {}

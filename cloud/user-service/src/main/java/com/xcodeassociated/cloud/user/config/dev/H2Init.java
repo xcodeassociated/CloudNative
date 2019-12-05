@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
-@Profile("dev")
+@Profile({"dev", "local-dev"})
 public class H2Init {
     private org.h2.tools.Server webServer;
     private org.h2.tools.Server server;

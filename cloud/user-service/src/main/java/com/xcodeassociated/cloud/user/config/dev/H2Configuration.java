@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 
-@Profile("dev")
+@Profile({"dev", "local-dev"})
 @Configuration
 public class H2Configuration {
     @Bean

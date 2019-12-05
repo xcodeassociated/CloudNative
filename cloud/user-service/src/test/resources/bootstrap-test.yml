@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: user-service
+  liquibase:
+    enabled: false
+  cloud:
+    config:
+      enabled: false

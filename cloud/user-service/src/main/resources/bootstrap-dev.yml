@@ -4,7 +4,7 @@ spring:
   cloud:
     config:
       label: master
-      profile: default
+      profile: dev
       uri: http://localhost:8888
   liquibase:
-    change-log: classpath:db/liquibase-changelog.yml
+    enabled: false

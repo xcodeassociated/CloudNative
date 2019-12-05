@@ -14,7 +14,7 @@ import java.util.List;
 
 @Log4j2
 @Component
-@Profile("dev")
+@Profile({"dev", "local-dev"})
 public class BootstrapDataWriter implements ApplicationRunner {
     private final UserRepository userRepository;
 

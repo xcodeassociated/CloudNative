@@ -9,7 +9,13 @@ group = 'com.xcodeassociated'
 version = '0.0.1'
 sourceCompatibility = '11'
 targetCompatibility = '11'
+configurations{
+    runtime.exclude group: 'log4j'
+}
 
+test {
+    classpath += configurations.compile
+}
 configurations {
 	compile.exclude group:'ch.qos.logback'
 	all*.exclude module : 'spring-boot-starter-logging'
@@ -39,7 +45,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	compile ('com.h2database:h2')
-    implementation('org.postgresql:postgresql')
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.25'
+    implementation 'org.liquibase:liquibase-core'
+    implementation 'org.postgresql:postgresql'
     compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
