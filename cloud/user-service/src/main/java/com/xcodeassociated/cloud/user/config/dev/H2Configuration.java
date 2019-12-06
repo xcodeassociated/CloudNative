@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Scope;
 public class H2Configuration {
     @Bean
     @Scope(value = "singleton")
-    H2Env getConfigStore() {
+    public H2Env getH2ConfigStore() {
         return H2Env.getInstance();
     }
 }
