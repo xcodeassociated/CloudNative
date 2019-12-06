@@ -11,12 +11,20 @@ sourceCompatibility = '11'
 targetCompatibility = '11'
 
 configurations {
+    runtime.exclude group: 'log4j'
+}
+
+configurations {
 	compile.exclude group:'ch.qos.logback'
 	all*.exclude module : 'spring-boot-starter-logging'
 
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+}
+
+test {
+    classpath += configurations.compile
 }
 
 repositories {
@@ -39,6 +47,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.postgresql:postgresql'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.25'
+    implementation 'org.liquibase:liquibase-core'
     compile ('com.h2database:h2')
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

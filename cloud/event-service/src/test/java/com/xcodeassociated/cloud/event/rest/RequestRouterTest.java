@@ -2,7 +2,6 @@ package com.xcodeassociated.cloud.event.rest;
 
 import com.xcodeassociated.cloud.event.dto.EventCommandDto;
 import com.xcodeassociated.cloud.event.dto.EventQueryDto;
-import com.xcodeassociated.cloud.event.repository.EventRepository;
 import com.xcodeassociated.cloud.event.service.EventService;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,21 +10,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
+@ActiveProfiles("test")
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(classes = {RequestRouter.class})
 @WebFluxTest()

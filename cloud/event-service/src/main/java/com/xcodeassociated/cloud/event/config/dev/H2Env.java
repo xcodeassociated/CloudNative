@@ -2,9 +2,7 @@ package com.xcodeassociated.cloud.event.config.dev;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 
-@Profile("dev")
 @Getter
 public class H2Env {
     private static H2Env INSTANCE = null;

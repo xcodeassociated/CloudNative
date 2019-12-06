@@ -6,3 +6,5 @@ spring:
             label: master
             profile: default
             uri: http://localhost:8888
+    liquibase:
+        change-log: classpath:db/liquibase-changelog.yml

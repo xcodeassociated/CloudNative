@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - includeAll:
+      path: db/changes
+
+  - preConditions:
+      - runningAs:
+          username: eventservice

@@ -6,3 +6,5 @@ spring:
             label: master
             profile: docker
             uri: http://host.docker.internal:8888
+    liquibase:
+        change-log: classpath:db/liquibase-changelog.yml

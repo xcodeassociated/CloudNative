@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: event-service
+  liquibase:
+    enabled: false
+  cloud:
+    config:
+      enabled: false
