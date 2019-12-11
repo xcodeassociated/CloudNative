@@ -81,13 +81,46 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - postgres-data:/var/lib/postgresql/db
+            - ./postgres-data:/var/lib/postgresql/data
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        restart: on-failure
+
+    grafana:
+        image: grafana/grafana:6.2.2
+        ports:
+            - "4000:3000"
+        networks:
+            - int-dev-net
+        links:
+          - "influxdb:influxdb"
+        volumes:
+            - ./grafana/influxdb.yaml:/etc/grafana/provisioning/datasources/influxdb.yaml
+            - ./grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+            - ./grafana/UserServiceDashboard.json:/var/lib/grafana/dashboards/UserService.json
+            - ./grafana/EventServiceDashboard.json:/var/lib/grafana/dashboards/EventService.json
+            - ./grafana/GatewayServiceDashboard.json:/var/lib/grafana/dashboards/GatewayService.json
+        environment:
+            GF_SECURITY_ADMIN_PASSWORD: admin
+        depends_on:
+            influxdb:
+              condition: service_started
+        restart: on-failure
+
+    influxdb:
+        image: influxdb:1.7.6
+        ports:
+            - "8086:8086"
+        networks:
+            - int-dev-net
+        volumes:
+            - ./influx_init.iql:/docker-entrypoint-initdb.d/influx_init.iql/
+            - ./infux-data:/var/lib/influxdb
+        environment:
+            INFLUXDB_HTTP_AUTH_ENABLED: "true"
+            INFLUXDB_ADMIN_USER: admin
+            INFLUXDB_ADMIN_PASSWORD: secret
         restart: on-failure
 
 networks:
     int-dev-net:
         driver: bridge
-
-volumes:
-    postgres-data:

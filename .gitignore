@@ -6,6 +6,7 @@
 
 # ignore services database docker volumes
 cloud/postgres-data
+cloud/infux-data
 
 ### STS ###
 *.apt_generated

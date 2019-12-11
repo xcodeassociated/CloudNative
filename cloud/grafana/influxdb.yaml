@@ -1,0 +1,46 @@
+# config file version
+apiVersion: 1
+
+datasources:
+  - name: gateway-service-influxdb
+    type: influxdb
+    access: proxy
+    orgId: 1
+    url: http://influxdb:8086
+    user: admin
+    password: secret
+    database: gatewayservicedb
+    isDefault: false
+    version: 1
+    editable: false
+    jsonData:
+      httpMode: GET
+      timeInterval: "10s"
+  - name: event-service-influxdb
+    type: influxdb
+    access: proxy
+    orgId: 1
+    url: http://influxdb:8086
+    user: admin
+    password: secret
+    database: eventservicedb
+    isDefault: false
+    version: 1
+    editable: false
+    jsonData:
+      httpMode: GET
+      timeInterval: "10s"
+  - name: user-service-influxdb
+    type: influxdb
+    access: proxy
+    orgId: 1
+    url: http://influxdb:8086
+    user: admin
+    password: secret
+    database: userservicedb
+    isDefault: false
+    version: 1
+    editable: false
+    jsonData:
+      httpMode: GET
+      timeInterval: "10s"
