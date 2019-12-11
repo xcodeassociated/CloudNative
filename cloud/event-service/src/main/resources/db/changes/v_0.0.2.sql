@@ -1,4 +1,4 @@
-create sequence hibernate_sequence;
+create sequence hibernate_sequence start 1 increment 1;
 
-insert into event (id, name) values (1, 'Event 0');
-insert into event (id, name) values (2, 'Event 1');
+insert into event (name) values ('Event 0');
+insert into event (name) values ('Event 1');
