@@ -15,8 +15,8 @@
             </Policies>
             <DefaultRolloverStrategy max="2000"/>
         </RollingFile>
-        <Socket name="socket" host="localhost" port="9100" reconnectionDelayMillis="5000">
-            <PatternLayout pattern="service=(gateway-service) logdate=(%d{ISO8601}) thread=(%thread)) level=(%level) loggerclass=(%logger{36}) message=(%msg)%n"/>
+        <Socket name="socket" host="host.docker.internal" port="9100" reconnectionDelayMillis="5000">
+            <PatternLayout pattern="service=(user-service) logdate=(%d{ISO8601}) thread=(%thread)) level=(%level) loggerclass=(%logger{36}) message=(%msg)%n"/>
         </Socket>
     </Appenders>
 

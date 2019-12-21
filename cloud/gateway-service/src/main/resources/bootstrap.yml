@@ -6,3 +6,5 @@ spring:
             label: master
             profile: default
             uri: http://localhost:8888
+logging:
+    config: classpath:log4j2.xml

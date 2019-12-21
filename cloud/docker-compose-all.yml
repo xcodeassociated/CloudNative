@@ -97,11 +97,16 @@ services:
                 condition: service_healthy
             postgres:
                 condition: service_started
+            logstash:
+                condition: service_started
+            influxdb:
+              condition: service_started
         links:
             - "configuration-service:configuration-service"
             - "postgres:postgres"
             - "eureka-service:eureka-service"
             - "influxdb:influxdb"
+            - "logstash:logstash"
         networks:
             - int-dev-net
         build:
@@ -113,6 +118,7 @@ services:
             - "5432"
             - "8100"
             - "8086"
+            - "9100"
         ports:
             - "8100:8100"
 
@@ -124,12 +130,17 @@ services:
             eureka-service:
                 condition: service_healthy
             postgres:
-              condition: service_started
+                condition: service_started
+            logstash:
+                condition: service_started
+            influxdb:
+                condition: service_started
         links:
             - "configuration-service:configuration-service"
             - "postgres:postgres"
             - "eureka-service:eureka-service"
             - "influxdb:influxdb"
+            - "logstash:logstash"
         networks:
             - int-dev-net
         build:
@@ -141,6 +152,7 @@ services:
             - "5432"
             - "8000"
             - "8086"
+            - "9100"
         ports:
             - "8000:8000"
 
@@ -149,6 +161,10 @@ services:
         depends_on:
             configuration-service:
                 condition: service_healthy
+            logstash:
+                condition: service_started
+            influxdb:
+                condition: service_started
             eureka-service:
                 condition: service_healthy
             user-service:
@@ -161,6 +177,7 @@ services:
             - "user-service:user-service"
             - "event-service:event-service"
             - "influxdb:influxdb"
+            - "logstash:logstash"
         networks:
             - int-dev-net
         build:
@@ -173,6 +190,7 @@ services:
             - "8000"
             - "9999"
             - "8086"
+            - "9100"
         ports:
             - "9999:9999"
 
@@ -228,6 +246,59 @@ services:
             INFLUXDB_HTTP_AUTH_ENABLED: "true"
             INFLUXDB_ADMIN_USER: admin
             INFLUXDB_ADMIN_PASSWORD: secret
+        restart: on-failure
+
+    elasticsearch:
+        build: elk/elasticsearch/
+        container_name: elasticsearch
+        networks:
+            - int-dev-net
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        environment:
+            ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+        restart: on-failure
+
+    logstash:
+        build: elk/logstash/
+        container_name: logstash
+        command: -f /etc/logstash/conf.d/
+        volumes:
+            - ./elk/logstash/config:/etc/logstash/conf.d
+        networks:
+            - int-dev-net
+        ports:
+            - "9100:9100"
+        expose:
+            - "9200"
+            - "9300"
+        links:
+            - elasticsearch
+        depends_on:
+            elasticsearch:
+                condition: service_started
+        restart: on-failure
+
+    kibana:
+        build: elk/kibana/
+        container_name: kibana
+        volumes:
+            - ./elk/kibana/config/:/opt/kibana/config/
+        networks:
+            - int-dev-net
+        ports:
+            - "5601:5601"
+        expose:
+            - "9200"
+            - "9300"
+        links:
+            - elasticsearch
+        depends_on:
+            elasticsearch:
+                condition: service_started
+            logstash:
+                condition: service_started
         restart: on-failure
 
 networks:

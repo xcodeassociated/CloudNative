@@ -7,5 +7,6 @@ EXPOSE 8888
 EXPOSE 8100
 EXPOSE 8000
 EXPOSE 8086
+EXPOSE 9100
 EXPOSE 9999
 CMD ["java","-jar","-Dspring.profiles.active=docker","app.jar"]

@@ -8,3 +8,5 @@ spring:
             uri: http://localhost:8888
     liquibase:
         change-log: classpath:db/liquibase-changelog.yml
+logging:
+    config: classpath:log4j2.xml

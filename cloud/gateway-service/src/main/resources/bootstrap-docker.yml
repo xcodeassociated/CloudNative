@@ -6,3 +6,5 @@ spring:
             label: master
             profile: docker
             uri: http://host.docker.internal:8888
+logging:
+    config: classpath:log4j2-docker.xml

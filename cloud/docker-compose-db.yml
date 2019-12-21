@@ -92,7 +92,7 @@ services:
         networks:
             - int-dev-net
         links:
-          - "influxdb:influxdb"
+            - "influxdb:influxdb"
         volumes:
             - ./grafana/influxdb.yaml:/etc/grafana/provisioning/datasources/influxdb.yaml
             - ./grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
@@ -119,6 +119,59 @@ services:
             INFLUXDB_HTTP_AUTH_ENABLED: "true"
             INFLUXDB_ADMIN_USER: admin
             INFLUXDB_ADMIN_PASSWORD: secret
+        restart: on-failure
+
+    elasticsearch:
+        build: elk/elasticsearch/
+        container_name: elasticsearch
+        networks:
+            - int-dev-net
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        environment:
+            ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+        restart: on-failure
+
+    logstash:
+        build: elk/logstash/
+        container_name: logstash
+        command: -f /etc/logstash/conf.d/
+        volumes:
+            - ./elk/logstash/config:/etc/logstash/conf.d
+        networks:
+            - int-dev-net
+        ports:
+            - "9100:9100"
+        expose:
+            - "9200"
+            - "9300"
+        links:
+            - elasticsearch
+        depends_on:
+            elasticsearch:
+                condition: service_started
+        restart: on-failure
+
+    kibana:
+        build: elk/kibana/
+        container_name: kibana
+        volumes:
+            - ./elk/kibana/config/:/opt/kibana/config/
+        networks:
+            - int-dev-net
+        ports:
+            - "5601:5601"
+        expose:
+            - "9200"
+            - "9300"
+        links:
+            - elasticsearch
+        depends_on:
+            elasticsearch:
+                condition: service_started
+            logstash:
+                condition: service_started
         restart: on-failure
 
 networks:

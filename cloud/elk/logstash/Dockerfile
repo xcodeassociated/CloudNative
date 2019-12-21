@@ -1,0 +1,3 @@
+FROM logstash:5
+EXPOSE 9200
+EXPOSE 9300
