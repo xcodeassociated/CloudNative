@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:8
 ENV APP_HOME=/usr/local/app/
 WORKDIR $APP_HOME
 COPY ./build/libs/zuul-service-*.jar ./app.jar

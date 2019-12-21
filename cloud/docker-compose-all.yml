@@ -4,7 +4,7 @@ services:
         image: configuration-service
         build:
             context: ./configuration-service
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile-build
         healthcheck:
             test: ["CMD", "curl", "-f","http://localhost:8888/actuator/health"]
             interval: 10s
@@ -29,7 +29,7 @@ services:
           - int-dev-net
         build:
             context: ./eureka-service
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile-build
         healthcheck:
             test: ["CMD", "curl", "-f","http://localhost:8761/actuator/health"]
             interval: 10s
@@ -59,7 +59,7 @@ services:
             - int-dev-net
         build:
             context: ./zuul-service
-            dockerfile: Dockerfile-all
+            dockerfile: Dockerfile-all-build
         healthcheck:
             test: ["CMD", "curl", "-f","http://localhost:8090/actuator/health"]
             interval: 10s
@@ -111,7 +111,7 @@ services:
             - int-dev-net
         build:
             context: ./user-service
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile-build
         expose:
             - "8761"
             - "8888"
@@ -145,7 +145,7 @@ services:
             - int-dev-net
         build:
             context: ./event-service
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile-build
         expose:
             - "8761"
             - "8888"
@@ -182,7 +182,7 @@ services:
             - int-dev-net
         build:
             context: ./gateway-service
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile-build
         expose:
             - "8761"
             - "8888"
