@@ -1,0 +1,151 @@
+version: '2.4'
+services:
+    configuration-service:
+        image: configuration-service
+        build:
+            context: ./configuration-service
+            dockerfile: Dockerfile-build
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8888/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        networks:
+            - int-dev-net
+        expose:
+            - "8888"
+        ports:
+            - "8888:8888"
+
+    eureka-service:
+        image: eureka-service
+        depends_on:
+            configuration-service:
+                condition: service_healthy
+        links:
+            - "configuration-service:configuration-service"
+        networks:
+            - int-dev-net
+        build:
+            context: ./eureka-service
+            dockerfile: Dockerfile-build
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://localhost:8761/actuator/health"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+        restart: on-failure
+        expose:
+            - "8761"
+            - "8888"
+        ports:
+            - "8761:8761"
+
+    postgres:
+        image: postgres:latest
+        container_name: "postgres"
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=password
+        networks:
+            - int-dev-net
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./postgres-data:/var/lib/postgresql/data
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        restart: on-failure
+
+    grafana:
+        image: grafana/grafana:6.2.2
+        ports:
+            - "4000:3000"
+        networks:
+            - int-dev-net
+        links:
+            - "influxdb:influxdb"
+        volumes:
+            - ./grafana/influxdb.yaml:/etc/grafana/provisioning/datasources/influxdb.yaml
+            - ./grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+            - ./grafana/UserServiceDashboard.json:/var/lib/grafana/dashboards/UserService.json
+            - ./grafana/EventServiceDashboard.json:/var/lib/grafana/dashboards/EventService.json
+            - ./grafana/GatewayServiceDashboard.json:/var/lib/grafana/dashboards/GatewayService.json
+        environment:
+            GF_SECURITY_ADMIN_PASSWORD: admin
+        depends_on:
+            influxdb:
+              condition: service_started
+        restart: on-failure
+
+    influxdb:
+        image: influxdb:1.7.6
+        ports:
+            - "8086:8086"
+        networks:
+            - int-dev-net
+        volumes:
+            - ./influx_init.iql:/docker-entrypoint-initdb.d/influx_init.iql/
+            - ./infux-data:/var/lib/influxdb
+        environment:
+            INFLUXDB_HTTP_AUTH_ENABLED: "true"
+            INFLUXDB_ADMIN_USER: admin
+            INFLUXDB_ADMIN_PASSWORD: secret
+        restart: on-failure
+
+    elasticsearch:
+        build: elk/elasticsearch/
+        container_name: elasticsearch
+        networks:
+            - int-dev-net
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        environment:
+            ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+        restart: on-failure
+
+    logstash:
+        build: elk/logstash/
+        container_name: logstash
+        command: -f /etc/logstash/conf.d/
+        volumes:
+            - ./elk/logstash/config:/etc/logstash/conf.d
+        networks:
+            - int-dev-net
+        ports:
+            - "9100:9100"
+        expose:
+            - "9200"
+            - "9300"
+        links:
+            - elasticsearch
+        depends_on:
+            elasticsearch:
+                condition: service_started
+        restart: on-failure
+
+    kibana:
+        build: elk/kibana/
+        container_name: kibana
+        volumes:
+            - ./elk/kibana/config/:/opt/kibana/config/
+        networks:
+            - int-dev-net
+        ports:
+            - "5601:5601"
+        expose:
+            - "9200"
+            - "9300"
+        links:
+            - elasticsearch
+        depends_on:
+            elasticsearch:
+                condition: service_started
+            logstash:
+                condition: service_started
+        restart: on-failure
+
+networks:
+    int-dev-net:
+        driver: bridge
