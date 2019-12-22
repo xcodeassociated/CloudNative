@@ -15,7 +15,7 @@
             </Policies>
             <DefaultRolloverStrategy max="2000"/>
         </RollingFile>
-        <Socket name="socket" host="host.docker.internal" port="9100" reconnectionDelayMillis="5000">
+        <Socket name="socket" host="logstash" port="9100" reconnectionDelayMillis="5000">
             <PatternLayout pattern="service=(event-service) logdate=(%d{ISO8601}) thread=(%thread)) level=(%level) loggerclass=(%logger{36}) message=(%msg)%n"/>
         </Socket>
     </Appenders>

@@ -5,22 +5,22 @@ zuul:
       sensitiveHeaders:
       path: /v1/gateway/**
       serviceId: GATEWAY-SERVICE
-      url: http://host.docker.internal:9999
+      url: http://gateway-service:9999
     event:
       path: /v1/event/**
       serviceId: EVENT-SERVICE
-      url: http://host.docker.internal:8000
+      url: http://event-service:8000
     user:
       path: /v1/user/**
       serviceId: USER-SERVICE
-      url: http://host.docker.internal:8100
+      url: http://user-service:8100
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://host.docker.internal:8761/eureka
+      defaultZone: http://eureka-service:8761/eureka
   instance:
-    hostname: host.docker.internal
+    hostname: eureka-service
 
 server:
   port: 8090
