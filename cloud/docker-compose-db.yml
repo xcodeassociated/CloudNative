@@ -85,6 +85,21 @@ services:
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         restart: on-failure
 
+    postgis:
+        image: kartoza/postgis:latest
+        container_name: "postgis"
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=password
+        networks:
+            - int-dev-net
+        ports:
+            - "5433:5432"
+        volumes:
+            - ./postgis-data:/var/lib/postgresql
+            - ./init-postgis.sql:/docker-entrypoint-initdb.d/init.sql
+        restart: on-failure
+
     grafana:
         image: grafana/grafana:6.2.2
         ports:

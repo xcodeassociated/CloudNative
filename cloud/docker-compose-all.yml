@@ -88,6 +88,21 @@ services:
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         restart: on-failure
 
+    postgis:
+        image: kartoza/postgis:latest
+        container_name: "postgis"
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=password
+        networks:
+            - int-dev-net
+        ports:
+            - "5433:5432"
+        volumes:
+            - ./postgis-data:/var/lib/postgresql
+            - ./init-postgis.sql:/docker-entrypoint-initdb.d/init.sql
+        restart: on-failure
+
     user-service:
         image: user-service
         depends_on:
@@ -129,7 +144,7 @@ services:
                 condition: service_healthy
             eureka-service:
                 condition: service_healthy
-            postgres:
+            postgis:
                 condition: service_started
             logstash:
                 condition: service_started
@@ -137,7 +152,7 @@ services:
                 condition: service_started
         links:
             - "configuration-service:configuration-service"
-            - "postgres:postgres"
+            - "postgis:postgis"
             - "eureka-service:eureka-service"
             - "influxdb:influxdb"
             - "logstash:logstash"
