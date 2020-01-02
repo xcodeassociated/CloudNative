@@ -9,10 +9,11 @@ import reactor.core.publisher.Flux;
 import com.xcodeassociated.cloud.event.dto.EventQueryDto;
 import reactor.core.publisher.Mono;
 
-import java.util.Objects;
+import javax.transaction.Transactional;
 
 @Log4j2
 @Service
+@Transactional
 public class EventService {
     private final EventRepository eventRepository;
 
