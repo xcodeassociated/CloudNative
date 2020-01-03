@@ -42,12 +42,10 @@ public class WebSecurityConfig {
 				// swagger ui
 				.pathMatchers("/api/**", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
 				// public access endpoints
-				.pathMatchers("/resource/login").permitAll()
-				.pathMatchers("/pub-api/**").permitAll()
-				// webflux router public
-				.pathMatchers("/reactive/**").permitAll()
+				.pathMatchers("/v1/resource/login").permitAll()
+				.pathMatchers("/v1/pub/**").permitAll()
 				// webflux restricted access
-				.pathMatchers("/resource/**").access((mono, context) -> mono
+				.pathMatchers("/v1/resource/**").access((mono, context) -> mono
 						.map(auth -> auth.getAuthorities().stream().anyMatch(e ->
 								e.getAuthority().equals("ROLE_ADMIN") || e.getAuthority().equals("ROLE_USER")))
 						.map(AuthorizationDecision::new))

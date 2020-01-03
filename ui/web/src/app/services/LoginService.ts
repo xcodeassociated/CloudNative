@@ -14,7 +14,7 @@ function loginService(username, password): Promise<Response> {
     })
   };
 
-  return fetch(`${appConfig.backend_url}/api/v1/gateway/resource/login`, requestOptions)
+  return fetch(`${appConfig.backend_url}/api/gateway/v1/resource/login`, requestOptions)
     .catch(() => {
       return Promise.reject('Backend not reachable');
     })

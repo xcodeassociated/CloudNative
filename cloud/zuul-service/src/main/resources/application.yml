@@ -3,13 +3,13 @@ zuul:
   routes:
     gateway:
       sensitiveHeaders:
-      path: /v1/gateway/**
+      path: /gateway/**
       serviceId: GATEWAY-SERVICE
     event:
-      path: /v1/event/**
+      path: /event/**
       serviceId: EVENT-SERVICE
     user:
-      path: /v1/user/**
+      path: /user/**
       serviceId: USER-SERVICE
 
 eureka:

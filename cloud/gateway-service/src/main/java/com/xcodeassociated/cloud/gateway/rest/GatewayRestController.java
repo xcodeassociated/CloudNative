@@ -31,6 +31,7 @@ import java.util.Map;
 
 @Log4j2
 @RestController
+@RequestMapping("/v1")
 @Api(value = "Gateway REST endpoints documentation")
 public class GatewayRestController {
 
@@ -71,7 +72,7 @@ public class GatewayRestController {
                 .build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                    .path("/router/events/{id}")
+                    .path("/v1/router/events/{id}")
                     .build(userSubject.getId()))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -93,7 +94,7 @@ public class GatewayRestController {
                 .baseUrl("http://event-service")
                 .build()
                 .post()
-                .uri("/router/create")
+                .uri("/v1/router/create")
                 .body(BodyInserters
                     .fromObject(data))
                 .exchange()
@@ -118,7 +119,7 @@ public class GatewayRestController {
                 .build()
                 .delete()
                 .uri(uriBuilder -> uriBuilder
-                    .path("/router/delete/{id}/{by}")
+                    .path("/v1/router/delete/{id}/{by}")
                     .build(id, userSubject.getId()))
                 .exchange()
                 .flatMap(response -> response.toEntity(String.class)))
@@ -138,7 +139,7 @@ public class GatewayRestController {
     public Mono<String> eventServiceMessage(){
         return HystrixCommands
             .from(client.build().get()
-                .uri("http://event-service/router/message")
+                .uri("http://event-service/v1/router/message")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(String.class))
@@ -153,7 +154,7 @@ public class GatewayRestController {
     public Mono<String> userServiceMessage(){
         return HystrixCommands
             .from(client.build().get()
-                .uri("http://user-service/router/message")
+                .uri("http://user-service/v1/router/message")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(String.class))

@@ -50,7 +50,7 @@ public class UserRestControllerTest {
     @Test
     public void httpUserQueryResponseDto_CorrectRequest_Test() {
         this.client.post()
-            .uri("/user/get")
+            .uri("/v1/user/get")
             .body(BodyInserters
                 .fromObject(new UserQueryRequestDto("user", "password")))
             .accept(MediaType.APPLICATION_JSON)
@@ -68,7 +68,7 @@ public class UserRestControllerTest {
     @Test
     public void httpUserQueryResponseDto_IncorrectRequest_Test() {
         this.client.post()
-            .uri("/user/get")
+            .uri("/v1/user/get")
             .body(BodyInserters
                 .fromObject("incorrect_request_type"))
             .accept(MediaType.APPLICATION_JSON)

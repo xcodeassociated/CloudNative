@@ -17,7 +17,7 @@ public class UserRouter {
     @Bean
     RouterFunction<ServerResponse> routes(Environment env) {
         return RouterFunctions
-            .route(GET("/router/message"),
+            .route(GET("/v1/router/message"),
                 request -> ServerResponse.ok().body(Flux.just(Objects.requireNonNull(env.getProperty("message"))), String.class));
     }
 }

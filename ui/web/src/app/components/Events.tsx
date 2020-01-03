@@ -72,7 +72,7 @@ class Events extends Component<object, IState> {
         ],
       };
 
-      fetch(`${appConfig.backend_url}/api/v1/gateway/resource/events`, requestOptions).then(onFetch)
+      fetch(`${appConfig.backend_url}/api/gateway/v1/resource/events`, requestOptions).then(onFetch)
     }
   }
 
@@ -93,7 +93,7 @@ class Events extends Component<object, IState> {
           })
         };
 
-        let url: string = `${appConfig.backend_url}/api/v1/gateway/resource/event/create`;
+        let url: string = `${appConfig.backend_url}/api/gateway/v1/resource/event/create`;
         fetch(url, requestOptions).then((response: Response) => {
           if (response.ok) {
             response.text().then(text => {
@@ -128,7 +128,7 @@ class Events extends Component<object, IState> {
         ],
       };
 
-      let url: string = `${appConfig.backend_url}/api/v1/gateway/resource/event/delete?id=` + eventId;
+      let url: string = `${appConfig.backend_url}/api/gateway/v1/resource/event/delete?id=` + eventId;
       fetch(url, requestOptions).then((response: Response) => {
         if (response.ok) {
           response.text().then(text => {

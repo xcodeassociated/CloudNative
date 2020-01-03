@@ -26,6 +26,7 @@ import java.util.Optional;
 
 @Log4j2
 @RestController
+@RequestMapping("/v1")
 public class AuthenticationRestController {
 
     @Autowired
@@ -52,7 +53,7 @@ public class AuthenticationRestController {
 
         HttpEntity<UserQueryRequestDto> request = new HttpEntity<>(new UserQueryRequestDto(user, password));
         ResponseEntity<UserQueryResponseServiceDto> response = this.restTemplate
-            .postForEntity("http://user-service/user/get", request, UserQueryResponseServiceDto.class);
+            .postForEntity("http://user-service/v1/user/get", request, UserQueryResponseServiceDto.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             UserQueryResponseServiceDto ret = response.getBody();

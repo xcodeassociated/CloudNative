@@ -30,13 +30,13 @@ public class RequestRouter {
     @Bean
     RouterFunction<ServerResponse> routes(Environment env) {
         return RouterFunctions
-            .route(GET("/router/events/{id}"),
+            .route(GET("/v1/router/events/{id}"),
                 request -> {
                     String id = request.pathVariable("id");
                     return ok().body(this.eventService.getAllEvents(), EventQueryDto.class);
                 }
             )
-            .andRoute(POST("/router/create"),
+            .andRoute(POST("/v1/router/create"),
                 request ->
                     ok()
                         .body(request.body(toMono(EventCommandDto.class))
@@ -49,7 +49,7 @@ public class RequestRouter {
                             .flatMap(e -> this.eventService.createEvent(Mono.just(e)))
                             ,EventQueryDto.class)
                 )
-            .andRoute(DELETE("/router/delete/{id}/{by}"),
+            .andRoute(DELETE("/v1/router/delete/{id}/{by}"),
                 request ->
                     ok()
                         .body(Mono.just(
@@ -58,7 +58,7 @@ public class RequestRouter {
                         ).flatMap(e -> this.eventService.removeEvent(Mono.just(e))), Long.class)
                 )
             // diagnostic api
-            .andRoute(GET("/router/message"),
+            .andRoute(GET("/v1/router/message"),
                 request ->
                     ok().body(Mono.just(Objects.requireNonNull(env.getProperty("message"))), String.class));
     }

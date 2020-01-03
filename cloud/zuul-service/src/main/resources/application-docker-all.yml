@@ -3,15 +3,15 @@ zuul:
   routes:
     gateway:
       sensitiveHeaders:
-      path: /v1/gateway/**
+      path: /gateway/**
       serviceId: GATEWAY-SERVICE
       url: http://gateway-service:9999
     event:
-      path: /v1/event/**
+      path: /event/**
       serviceId: EVENT-SERVICE
       url: http://event-service:8000
     user:
-      path: /v1/user/**
+      path: /user/**
       serviceId: USER-SERVICE
       url: http://user-service:8100
 

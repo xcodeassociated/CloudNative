@@ -60,7 +60,7 @@ public class RequestRouterTest {
             .build();
 
         client.get()
-            .uri("/router/events/1")
+            .uri("/v1/router/events/1")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
@@ -79,7 +79,7 @@ public class RequestRouterTest {
             .build();
 
         client.post()
-            .uri("/router/create")
+            .uri("/v1/router/create")
             .body(BodyInserters
                 .fromObject(new EventCommandDto(2L, "Event 2", 1L)))
             .accept(MediaType.APPLICATION_JSON)
@@ -100,7 +100,7 @@ public class RequestRouterTest {
             .build();
 
         client.post()
-            .uri("/router/create")
+            .uri("/v1/router/create")
             .body(BodyInserters
                 .fromObject("incorrect_request_type"))
             .accept(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ public class RequestRouterTest {
             .build();
 
         client.delete()
-            .uri("/router/delete/1/1")
+            .uri("/v1/router/delete/1/1")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()

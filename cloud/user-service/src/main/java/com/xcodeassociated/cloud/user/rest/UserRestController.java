@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/v1/user")
 public class UserRestController {
     private final UserService userService;
 
