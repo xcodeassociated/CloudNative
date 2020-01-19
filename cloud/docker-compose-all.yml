@@ -1,4 +1,4 @@
-version: '2.4'
+version: '3'
 services:
     configuration-service:
         image: configuration-service
@@ -6,11 +6,11 @@ services:
             context: ./configuration-service
             dockerfile: Dockerfile-build
         healthcheck:
-            test: ["CMD", "curl", "-f","http://localhost:8888/actuator/health"]
+            test: ["CMD", "curl", "-f","http://configuration-service:8888/actuator/health"]
             interval: 10s
             timeout: 30s
             retries: 10
-        restart: on-failure
+        restart: always
         networks:
             - int-dev-net
         expose:
@@ -21,8 +21,7 @@ services:
     eureka-service:
         image: eureka-service
         depends_on:
-            configuration-service:
-                condition: service_healthy
+            - "configuration-service"
         links:
           - "configuration-service:configuration-service"
         networks:
@@ -31,24 +30,24 @@ services:
             context: ./eureka-service
             dockerfile: Dockerfile-build
         healthcheck:
-            test: ["CMD", "curl", "-f","http://localhost:8761/actuator/health"]
+            test: ["CMD", "curl", "-f","http://eureka-service:8761/actuator/health"]
             interval: 10s
             timeout: 30s
             retries: 10
-        restart: on-failure
+        restart: always
         expose:
             - "8761"
             - "8888"
         ports:
-          - "8761:8761"
+            - "8761:8761"
+        environment:
+            - WAIT_HOSTS=configuration-service:8888/actuator/health
 
     zuul-service:
         image: zuul-all-service
         depends_on:
-            configuration-service:
-                condition: service_healthy
-            eureka-service:
-                condition: service_healthy
+            - "configuration-service"
+            - "eureka-service"
         links:
             - "configuration-service:configuration-service"
             - "eureka-service:eureka-service"
@@ -61,17 +60,19 @@ services:
             context: ./zuul-service
             dockerfile: Dockerfile-all-build
         healthcheck:
-            test: ["CMD", "curl", "-f","http://localhost:8090/actuator/health"]
+            test: ["CMD", "curl", "-f","http://zuul-service:8090/actuator/health"]
             interval: 10s
             timeout: 30s
             retries: 10
-        restart: on-failure
+        restart: always
         expose:
             - "8761"
             - "8888"
             - "8090"
         ports:
             - "8090:8090"
+        environment:
+            - WAIT_HOSTS=configuration-service:8888/actuator/health eureka-service:8761/actuator/health
 
     postgres:
         image: postgres:latest
@@ -106,16 +107,11 @@ services:
     user-service:
         image: user-service
         depends_on:
-            configuration-service:
-                condition: service_healthy
-            eureka-service:
-                condition: service_healthy
-            postgres:
-                condition: service_started
-            logstash:
-                condition: service_started
-            influxdb:
-              condition: service_started
+            - "configuration-service"
+            - "eureka-service"
+            - "postgres"
+            - "logstash"
+            - "influxdb"
         links:
             - "configuration-service:configuration-service"
             - "postgres:postgres"
@@ -136,20 +132,23 @@ services:
             - "9100"
         ports:
             - "8100:8100"
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://user-service:8100/actuator/health"]
+            interval: 10s
+            timeout: 30s
+            retries: 10
+        restart: always
+        environment:
+            - WAIT_HOSTS=configuration-service:8888/actuator/health eureka-service:8761/actuator/health
 
     event-service:
         image: event-service
         depends_on:
-            configuration-service:
-                condition: service_healthy
-            eureka-service:
-                condition: service_healthy
-            postgis:
-                condition: service_started
-            logstash:
-                condition: service_started
-            influxdb:
-                condition: service_started
+            - "configuration-service"
+            - "eureka-service"
+            - "postgis"
+            - "logstash"
+            - "influxdb"
         links:
             - "configuration-service:configuration-service"
             - "postgis:postgis"
@@ -170,22 +169,24 @@ services:
             - "9100"
         ports:
             - "8000:8000"
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://event-service:8000/actuator/health"]
+            interval: 10s
+            timeout: 30s
+            retries: 10
+        restart: always
+        environment:
+            - WAIT_HOSTS=configuration-service:8888/actuator/health eureka-service:8761/actuator/health
 
     gateway-service:
         image: gateway-service
         depends_on:
-            configuration-service:
-                condition: service_healthy
-            logstash:
-                condition: service_started
-            influxdb:
-                condition: service_started
-            eureka-service:
-                condition: service_healthy
-            user-service:
-                condition: service_started
-            event-service:
-                condition: service_started
+            - "configuration-service"
+            - "logstash"
+            - "influxdb"
+            - "eureka-service"
+            - "user-service"
+            - "event-service"
         links:
             - "configuration-service:configuration-service"
             - "eureka-service:eureka-service"
@@ -208,12 +209,19 @@ services:
             - "9100"
         ports:
             - "9999:9999"
+        healthcheck:
+            test: ["CMD", "curl", "-f","http://gateway-service:9999/actuator/health"]
+            interval: 10s
+            timeout: 30s
+            retries: 10
+        restart: always
+        environment:
+            - WAIT_HOSTS=configuration-service:8888/actuator/health eureka-service:8761/actuator/health zuul-service:8090/actuator/health
 
     web-service:
         image: web
         depends_on:
-            gateway-service:
-                condition: service_started
+            - "gateway-service"
         links:
             - "zuul-service:zuul-service"
         networks:
@@ -226,6 +234,7 @@ services:
             - "8090"
         ports:
             - "3000:3000"
+        restart: on-failure
 
     grafana:
         image: grafana/grafana:6.2.2
@@ -244,8 +253,7 @@ services:
         environment:
             GF_SECURITY_ADMIN_PASSWORD: admin
         depends_on:
-            influxdb:
-                condition: service_started
+            - "influxdb"
         restart: on-failure
 
     influxdb:
@@ -265,6 +273,7 @@ services:
 
     elasticsearch:
         build: elk/elasticsearch/
+        image: cloud_native/elasticsearch:0.0.1
         container_name: elasticsearch
         networks:
             - int-dev-net
@@ -277,6 +286,7 @@ services:
 
     logstash:
         build: elk/logstash/
+        image: cloud_native/logstash:0.0.1
         container_name: logstash
         command: -f /etc/logstash/conf.d/
         volumes:
@@ -291,12 +301,12 @@ services:
         links:
             - elasticsearch
         depends_on:
-            elasticsearch:
-                condition: service_started
+            - "elasticsearch"
         restart: on-failure
 
     kibana:
         build: elk/kibana/
+        image: cloud_native/kibana:0.0.1
         container_name: kibana
         volumes:
             - ./elk/kibana/config/:/opt/kibana/config/
@@ -310,13 +320,10 @@ services:
         links:
             - elasticsearch
         depends_on:
-            elasticsearch:
-                condition: service_started
-            logstash:
-                condition: service_started
+            - "elasticsearch"
+            - "logstash"
         restart: on-failure
 
 networks:
     int-dev-net:
         driver: bridge
-

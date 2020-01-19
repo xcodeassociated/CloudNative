@@ -1,1 +1,32 @@
-src/main/docker/Dockerfile-build
+FROM gradle:jdk11 as builder
+
+COPY --chown=gradle:gradle . /home/gradle/src/app
+WORKDIR /home/gradle/src/app
+RUN gradle clean build
+
+FROM openjdk:11
+
+RUN apt-get update
+RUN apt-get -y install curl
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
+RUN apt-get -y install nodejs
+RUN npm install -g wait-on
+
+ENV APP_HOME=/usr/local/app/
+
+COPY ./wait-for.sh $APP_HOME
+CMD chmod +x ./wait-for.sh
+
+WORKDIR $APP_HOME
+
+COPY --from=builder /home/gradle/src/app/build/libs/gateway-service-*.jar ./app.jar
+
+EXPOSE 8761
+EXPOSE 8888
+EXPOSE 8100
+EXPOSE 8000
+EXPOSE 8086
+EXPOSE 9100
+EXPOSE 9999
+
+ENTRYPOINT bash ./wait-for.sh "${WAIT_HOSTS}" && java -jar -Dspring.profiles.active=docker app.jar
