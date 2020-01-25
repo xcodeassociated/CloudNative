@@ -1,7 +1,7 @@
 version: '3'
 services:
     configuration-service:
-        image: configuration-service
+        image: xcodeassociated/configuration-service:0.0.1
         build:
             context: ./configuration-service
             dockerfile: Dockerfile-build
@@ -19,7 +19,7 @@ services:
             - "8888:8888"
 
     eureka-service:
-        image: eureka-service
+        image: xcodeassociated/eureka-service:0.0.1
         depends_on:
             - "configuration-service"
         links:
@@ -44,7 +44,7 @@ services:
             - WAIT_HOSTS=configuration-service:8888/actuator/health
 
     zuul-service:
-        image: zuul-all-service
+        image: xcodeassociated/zuul-all-service:0.0.1
         depends_on:
             - "configuration-service"
             - "eureka-service"
@@ -105,7 +105,7 @@ services:
         restart: on-failure
 
     user-service:
-        image: user-service
+        image: xcodeassociated/user-service:0.0.1
         depends_on:
             - "configuration-service"
             - "eureka-service"
@@ -142,7 +142,7 @@ services:
             - WAIT_HOSTS=configuration-service:8888/actuator/health eureka-service:8761/actuator/health
 
     event-service:
-        image: event-service
+        image: xcodeassociated/event-service:0.0.1
         depends_on:
             - "configuration-service"
             - "eureka-service"
@@ -179,7 +179,7 @@ services:
             - WAIT_HOSTS=configuration-service:8888/actuator/health eureka-service:8761/actuator/health
 
     gateway-service:
-        image: gateway-service
+        image: xcodeassociated/gateway-service:0.0.1
         depends_on:
             - "configuration-service"
             - "logstash"
@@ -219,7 +219,7 @@ services:
             - WAIT_HOSTS=configuration-service:8888/actuator/health eureka-service:8761/actuator/health zuul-service:8090/actuator/health
 
     web-service:
-        image: web
+        image: xcodeassociated/web:0.0.1
         depends_on:
             - "gateway-service"
         links:
@@ -273,7 +273,7 @@ services:
 
     elasticsearch:
         build: elk/elasticsearch/
-        image: cloud_native/elasticsearch:0.0.1
+        image: xcodeassociated/elasticsearch:0.0.1
         container_name: elasticsearch
         networks:
             - int-dev-net
@@ -286,7 +286,7 @@ services:
 
     logstash:
         build: elk/logstash/
-        image: cloud_native/logstash:0.0.1
+        image: xcodeassociated/logstash:0.0.1
         container_name: logstash
         command: -f /etc/logstash/conf.d/
         volumes:
@@ -306,7 +306,7 @@ services:
 
     kibana:
         build: elk/kibana/
-        image: cloud_native/kibana:0.0.1
+        image: xcodeassociated/kibana:0.0.1
         container_name: kibana
         volumes:
             - ./elk/kibana/config/:/opt/kibana/config/
